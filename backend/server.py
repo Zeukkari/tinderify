@@ -12,11 +12,11 @@ session = None
 
 @app.route('/bower_components/<path:filename>')
 def serve_static(filename):
-    return flask.send_from_directory('/home/murokki/tinderbot/frontend/bower_components', filename)
+    return flask.send_from_directory('../frontend/bower_components', filename)
 
 @app.route('/<path:filename>')
 def test(filename):
-    return flask.send_from_directory('/home/murokki/tinderbot/frontend/app', filename)
+    return flask.send_from_directory('../frontend/app', filename)
 
 @app.route('/')
 def root():
