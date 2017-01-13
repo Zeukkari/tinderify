@@ -9,14 +9,12 @@ def autolike_users(session):
     for user in session.nearby_users():
         number_of_users += 1
         match = user.like()
-
         if match:
             matches += 1
 
         print "%s match=%s %d/%d %f" % (user, match, matches, number_of_users, float(matches) / number_of_users)
-
         db.save_user(user, match)
-        # time.sleep(1)
+        # time.sleep(1) Might be needed
     print("Matched with %d/%d users\n" % (matches, number_of_users))
     return json.dumps({"users": number_of_users, "matched":matches})
 

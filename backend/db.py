@@ -8,8 +8,6 @@ def connect():
     db.create_tables([PotentialMatch, Photo, Thumbnail, Interest], safe=True)
 
 def save_user(user, match):
-        # print dir(user)
-        # pprint (vars(user))
         saved_user = PotentialMatch(tinder_id=user.id, name=user.name, common_connections=len(user.common_connections),
                                  connection_count=0, age=user.age, distance=user.distance_km, matched=match)
         saved_user.save()
@@ -27,14 +25,11 @@ def save_user(user, match):
 class PotentialMatch(Model):
     tinder_id = CharField()
     name = CharField()
-    # photos = ForeignKeyField(Photo)
-    # thumbnails = ForeignKeyField(Thumbnail)
     common_connections = IntegerField()
     connection_count = IntegerField()
     matched = BooleanField()
     age = IntegerField()
     distance = IntegerField()
-    # common_interests = ForeignKeyField(Interest)
 
 #     user.bio # their biography
 # user.name # their name

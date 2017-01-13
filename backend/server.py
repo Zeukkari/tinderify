@@ -67,7 +67,6 @@ def statistics():
 # @app.route("/api/updates", methods=["GET"])
 # def get_updates():
 
-
 if __name__ == "__main__":
     main()
     print sys.argv
