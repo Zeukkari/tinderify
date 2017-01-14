@@ -6,6 +6,7 @@ from flask import request
 import db
 import sys
 import api
+import config
 
 app = Flask(__name__, static_folder='../frontend/app', static_url_path='/')
 session = None
@@ -23,9 +24,8 @@ def root():
     return app.send_static_file('index.html')
 
 def main():
-    facebook_auth_token = open("token.cfg").read()
     global session
-    session = pynder.Session(facebook_auth_token)
+    session = pynder.Session(facebook_token=config.facebook_auth["access_token"], facebook_id=config.facebook_auth["facebook_id"])
     db.connect()
     # if len(sys.argv) > 1 and sys.argv[1] == "--like":
     #     autolike_users(session)
