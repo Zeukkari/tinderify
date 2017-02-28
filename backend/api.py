@@ -21,8 +21,7 @@ def autolike_users(session):
 def get_conversation(messages):
     conversation = []
     for message in messages:
-    # print message.sender, message.body
-        conversation.append({"message": message.body, "sender": message.sender.name})
+        conversation.append({"id" : message.id, "message": message.body, "sender": message.sender.name, "sent" : message.sent});
     return conversation
 
 def users(session):
@@ -34,23 +33,26 @@ def users(session):
     print ret
     return jsonpickle.dumps(ret)
 
-def matches(session):
+def get_matches(matches):
     ret = {}
-    matches = session.matches()
     for match in matches:
         ret[match.id] = {"name": match.user.name, "messages": get_conversation(match.messages),"photos" : match.user.photos, "thumbnails" : match.user.thumbnails }
-        # ret.append(str(user.photos).split(","))
-    print ret
-    return jsonpickle.dumps(ret)
+    return ret
+
+def matches(session):
+    matches = get_matches(session.matches())
+    # print matches
+    return jsonpickle.dumps(matches)
 
 def send_message(session, id, body):
     ret = session._api.message(id, body)
     return "ok"
 
 def get_updates(session):
-    updates = session._api.updates("")
+    ret = session._api.updates("")
+    print ret
+    updates = get_matches(ret)
     return jsonpickle.dumps(updates)
-
 
 def get_statistics(session):
     number_of_users_swiped = db.PotentialMatch.select().count()

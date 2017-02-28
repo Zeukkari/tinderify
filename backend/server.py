@@ -30,7 +30,7 @@ def main():
     # if len(sys.argv) > 1 and sys.argv[1] == "--like":
     #     autolike_users(session)
 
-@app.route('/autolike')
+@app.route('/api/autolike')
 def autolike_users():
     """
     Swipe right on all users until likes are exhausted
@@ -64,9 +64,13 @@ def statistics():
     """
     return api.get_statistics(session)
 
-# @app.route("/api/updates", methods=["GET"])
-# def get_updates():
-
+@app.route("/api/updates", methods=["GET"])
+def get_updates():
+    """
+    Get updates, new matches, messages etc.
+    :return: updates
+    """
+    return api.get_updates(session)
 if __name__ == "__main__":
     main()
     print sys.argv

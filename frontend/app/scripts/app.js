@@ -28,6 +28,10 @@ angular
         templateUrl: 'views/chat.html',
         controller: 'ChatCtrl',
         controllerAs: 'chat'
+      }).when('/commands', {
+        templateUrl: 'views/commands.html',
+        controller: 'CommandsCtrl',
+        controllerAs: 'commands'
       })
       .otherwise({
         redirectTo: '/'
@@ -42,5 +46,9 @@ angular
     return $resource("http://localhost:5000/api/message")
   }).factory("Statistics", function($resource) {
     return $resource("http://localhost:5000/api/statistics")
+  }).factory("Updates", function($resource) {
+        return $resource("http://localhost:5000/api/updates")
+  }).factory("Autolike", function($resource) {
+        return $resource("http://localhost:5000/api/autolike")
   })
   ;
