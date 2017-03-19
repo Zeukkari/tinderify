@@ -13,7 +13,7 @@ angular
         'ngResource',
         'ngRoute'
     ])
-    .config(function ($routeProvider) {
+    .config(function($routeProvider) {
         $routeProvider
             .when('/', {
                 templateUrl: 'views/main.html',
@@ -25,25 +25,24 @@ angular
                 controller: 'MatchCtrl',
                 controllerAs: 'match'
             }).when('/commands', {
-            templateUrl: 'views/commands.html',
-            controller: 'CommandsCtrl',
-            controllerAs: 'commands'
-        })
+                templateUrl: 'views/commands.html',
+                controller: 'CommandsCtrl',
+                controllerAs: 'commands'
+            })
             .otherwise({
                 redirectTo: '/'
             });
-//      $locationProvider.hashPrefix('');
-    }).factory("Users", function ($resource) {
-    return $resource("http://localhost:5000/api/users")
-}).factory("Matches", function ($resource) {
-    return $resource("http://localhost:5000/api/matches")
-}).factory("Messages", function ($resource) {
-    return $resource("http://localhost:5000/api/message")
-}).factory("Statistics", function ($resource) {
-    return $resource("http://localhost:5000/api/statistics")
-}).factory("Updates", function ($resource) {
-    return $resource("http://localhost:5000/api/updates")
-}).factory("Autolike", function ($resource) {
-    return $resource("http://localhost:5000/api/autolike")
-})
-;
+        //      $locationProvider.hashPrefix('');
+    }).factory("Users", function($resource) {
+        return $resource("http://localhost:5000/api/users")
+    }).factory("Matches", function($resource) {
+        return $resource("http://localhost:5000/api/matches")
+    }).factory("Messages", function($resource) {
+        return $resource("http://localhost:5000/api/message")
+    }).factory("Statistics", function($resource) {
+        return $resource("http://localhost:5000/api/statistics")
+    }).factory("Updates", function($resource) {
+        return $resource("http://localhost:5000/api/updates")
+    }).factory("Autolike", function($resource) {
+        return $resource("http://localhost:5000/api/autolike")
+    });

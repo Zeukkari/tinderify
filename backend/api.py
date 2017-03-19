@@ -48,8 +48,8 @@ def send_message(session, id, body):
     ret = session._api.message(id, body)
     return "ok"
 
-def get_updates(session):
-    ret = session._api.updates("")
+def get_updates(session, since):
+    ret = session.updates(since)
     print ret
     updates = get_matches(ret)
     return jsonpickle.dumps(updates)

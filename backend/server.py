@@ -70,8 +70,9 @@ def get_updates():
     Get updates, new matches, messages etc.
     :return: updates
     """
-    return api.get_updates(session)
+    since = request.args.get("since")
+    return api.get_updates(session, since)
 if __name__ == "__main__":
     init()
     webbrowser.open("http://localhost:5000")
-    app.run()
+    app.run(threaded=True)
