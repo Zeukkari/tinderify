@@ -7,6 +7,7 @@ import db
 import sys
 import api
 import config
+import webbrowser
 
 app = Flask(__name__, static_folder='../frontend/app', static_url_path='/')
 session = None
@@ -23,7 +24,7 @@ def test(filename):
 def root():
     return app.send_static_file('index.html')
 
-def main():
+def init():
     global session
     session = pynder.Session(facebook_token=config.facebook_auth["access_token"], facebook_id=config.facebook_auth["facebook_id"])
     db.connect()
@@ -45,7 +46,6 @@ def matches():
     :return: new matches
     """
     return api.matches(session)
-
 
 @app.route("/api/message", methods=["POST"])
 def send_message():
@@ -72,6 +72,6 @@ def get_updates():
     """
     return api.get_updates(session)
 if __name__ == "__main__":
-    main()
-    print sys.argv
+    init()
+    webbrowser.open("http://localhost:5000")
     app.run()

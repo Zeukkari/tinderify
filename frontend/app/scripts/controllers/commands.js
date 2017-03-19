@@ -2,15 +2,11 @@
 
 /**
  * @ngdoc function
- * @name tinderApp.controller:MainCtrl
- * @description
- * # MainCtrl
- * Controller of the tinderApp
+ * @name tinderApp.controller:CommandsCtrl
+ * @description controller for the commands page
  */
 angular.module('tinderApp')
-  .controller('CommandsCtrl', ['$scope', 'Autolike', function ($scope, Autolike) {
+    .controller('CommandsCtrl', ['$scope', 'Autolike', function ($scope, Autolike) {
 
-    this.autolike = function() {
-     Autolike.get();
-     };
- }]);
+        this.autolike = () => Autolike.get();
+    }]);
