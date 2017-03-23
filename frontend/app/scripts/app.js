@@ -11,7 +11,7 @@
 angular
     .module('tinderApp', [
         'ngResource',
-        'ngRoute'
+        'ngRoute', 'ngDialog'
     ])
     .config(function($routeProvider) {
         $routeProvider
@@ -28,6 +28,8 @@ angular
                 templateUrl: 'views/commands.html',
                 controller: 'CommandsCtrl',
                 controllerAs: 'commands'
+            }).when('/photos', {
+              templateUrl: 'view/photos.html'
             })
             .otherwise({
                 redirectTo: '/'
