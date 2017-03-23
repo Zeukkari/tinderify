@@ -2,6 +2,7 @@ import json
 import jsonpickle
 from flask import request
 import db
+import time
 
 def autolike_users(session):
     matches = 0
@@ -21,8 +22,9 @@ def autolike_users(session):
 def get_conversation(messages):
     conversation = []
     for message in messages:
-        conversation.append({"id" : message.id, "message": message.body, "sender": message.sender.name, "sent" : message.sent});
-    return conversation
+        conversation.append({"id" : message.id, "message": message.body, "sender": message.sender.name, "sent" : time.mktime(message.sent.timetuple())});
+
+    return sorted(conversation, key=lambda x: x["sent"])
 
 def users(session):
     ret = {}
@@ -36,7 +38,8 @@ def users(session):
 def get_matches(matches):
     ret = {}
     for match in matches:
-        ret[match.id] = {"name": match.user.name, "messages": get_conversation(match.messages),"photos" : match.user.photos, "thumbnails" : match.user.thumbnails }
+        ret[match.id] = {"name": match.user.name, "messages": get_conversation(match.messages),
+        "photos" : match.user.photos, "thumbnails" : match.user.thumbnails }
     return ret
 
 def matches(session):

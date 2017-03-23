@@ -7,10 +7,12 @@
  */
 angular.module('tinderApp')
     .controller('MatchCtrl', ['$scope', 'Matches', 'Users', 'Messages', 'Updates', '$interval', function($scope, Matches, Users, Messages, Updates, $interval) {
-        this.matches = Matches.get();
+        Matches.get((data) => {
+            this.matches = sortMatches(data.toJSON());
+        });
 
         // Open chat with the given user
-        this.openChat = function(id) {
+        this.openChat = (id) => {
             this.isChatEnabled = true;
             this.currentId = id;
             this.messages = sortMessages(this.matches[id].messages);
@@ -26,7 +28,9 @@ angular.module('tinderApp')
 
         // Get updates, like new matches, new messages, removed users, profile changes
         this.getUpdates = () => {
-            Updates.get({since : lastSuccesfulUpdate}, (data) => {
+            Updates.get({
+                since: lastSuccesfulUpdate
+            }, (data) => {
                 let updates = data.toJSON()
                 for (let id in updates) {
                     let existingMatch = this.matches[id];
@@ -49,5 +53,9 @@ angular.module('tinderApp')
     }]);
 
 function sortMessages(messages) {
-    return _.sortBy(messages, (message) => Date.parse(message.sent)).reverse();
+    return _.sortBy(messages, (message) => {return Date.parse(message.sent)}).reverse();
+}
+
+function sortMatches(matches) {
+    return _.sortBy(matches, (match) => {return match.messages.length == 0 ? 0 : match.messages[match.messages.length - 1].sent}).reverse();
 }
