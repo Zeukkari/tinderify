@@ -9,7 +9,8 @@ angular.module('tinderApp')
     .controller('MatchCtrl', ['$scope', 'Matches', 'Users', 'Messages', 'Updates', '$interval', 'ngDialog',
         function($scope, Matches, Users, Messages, Updates, $interval, ngDialog) {
             Matches.get((data) => {
-                this.matches = sortMatches(data.toJSON());
+                this.matches = data.toJSON();
+                this.sortedKeys = sortMatchKeys(this.matches);
             });
 
             // Open chat with the given user
@@ -59,6 +60,7 @@ angular.module('tinderApp')
                         existingMatch.messages = sortMessages(_.unionBy(existingMatch.messages, updatedMatch.messages, "id"));
                     }
                 });
+                this.sortedKeys = sortMatchKeys(this.matches);
                 lastSuccesfulUpdate = new Date().toISOString();
             };
             $interval(this.getUpdates, 10000); // Periodically get new updates
@@ -71,8 +73,8 @@ function sortMessages(messages) {
     }).reverse();
 }
 
-function sortMatches(matches) {
+function sortMatchKeys(matches) {
     return _.sortBy(matches, (match) => {
         return match.messages.length == 0 ? 0 : match.messages[match.messages.length - 1].sent
-    }).reverse();
+    }).reverse().map((element) => {return element.id});
 }

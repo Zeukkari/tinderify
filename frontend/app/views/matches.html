@@ -1,17 +1,18 @@
 <p>Matches:</p>
-<div class="container">
-    <div ng-repeat="(key, value) in match.matches" class="row row-bottom-margin">
-        <div class="col-sm-1"><a ng-click="match.openChat(key)">{{value.name }}</a></div>
-        <div class="col-sm-2"><img ng-src="{{value.thumbnails[0]}}" ng-click="match.openPhotos(key)"></div>
-        <div class="col-sm-9">{{value.messages.slice(-1)[0].message}}</div>
-    </div>
-</div>
 
-<div class="container" ng-show="match.isChatEnabled">
+<div class="container chat-view" ng-show="match.isChatEnabled">
     <div class="row" ng-repeat="message in match.messages">
-        <div class="col-sm-4">{{ message.sender }} </div>
-        <div class="col-sm-4"> {{ message.message }} </div>
+        <div class="col-sm-3">{{ message.sender }} </div>
+        <div class="col-sm-9"> {{ message.message }} </div>
     </div>
     <input type="text" ng-model="match.chatMessage">
     <input type="button" ng-click="match.sendMessage()">
+</div>
+
+<div class="container">
+    <div ng-repeat="(index, key) in match.sortedKeys" class="row row-bottom-margin">
+        <div class="col-sm-1"><a ng-click="match.openChat(key)">{{match.matches[key].name }}</a></div>
+        <div class="col-sm-2"><img ng-src="{{match.matches[key].thumbnails[0]}}" ng-click="match.openPhotos(key)"></div>
+        <div class="col-sm-9">{{match.matches[key].messages.slice(-1)[0].message}}</div>
+    </div>
 </div>

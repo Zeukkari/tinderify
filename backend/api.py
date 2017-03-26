@@ -39,7 +39,7 @@ def get_matches(matches):
     ret = {}
     for match in matches:
         ret[match.id] = {"name": match.user.name, "messages": get_conversation(match.messages),
-        "photos" : match.user.photos, "thumbnails" : match.user.thumbnails }
+        "photos" : match.user.photos, "thumbnails" : match.user.thumbnails, "id" : match.id }
     return ret
 
 def matches(session):

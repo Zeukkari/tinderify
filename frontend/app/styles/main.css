@@ -85,3 +85,7 @@ body {
 .row-bottom-margin {
   margin-bottom:10px;
 }
+
+.chat-view {
+  background: #F8F8F8;
+}
