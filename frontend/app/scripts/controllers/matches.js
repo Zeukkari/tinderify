@@ -8,6 +8,10 @@
 angular.module('tinderApp')
     .controller('MatchCtrl', ['$scope', 'Matches', 'Users', 'Messages', 'Updates', '$interval', 'ngDialog',
         function($scope, Matches, Users, Messages, Updates, $interval, ngDialog) {
+
+            this.lastSuccesfulUpdate = ""; // Contains last succesful made update as an ISO date string
+            this.isMatchListEnabled = true;
+
             Matches.get((data) => {
                 this.matches = data.toJSON();
                 this.sortedKeys = sortMatchKeys(this.matches);
@@ -16,11 +20,16 @@ angular.module('tinderApp')
             // Open chat with the given user
             this.openChat = (id) => {
                 this.isChatEnabled = true;
+                this.isMatchListEnabled = false;
                 this.currentId = id;
                 this.messages = sortMessages(this.matches[id].messages);
                 this.currentMatch = this.matches[id];
-
                 // $("#matchphotos").slick();
+            }
+
+            this.returnFromChat = () => {
+              this.isChatEnabled = false;
+              this.isMatchListEnabled = true;
             }
 
             this.openPhotos = id => {
@@ -37,12 +46,10 @@ angular.module('tinderApp')
                 "body": this.chatMessage
             });
 
-            var lastSuccesfulUpdate = ""; // Contains last succesful made update as an ISO date string
-
             // Get updates, like new matches, new messages, removed users, profile changes
             this.getUpdates = () => {
                 Updates.get({
-                    since: lastSuccesfulUpdate
+                    since: this.lastSuccesfulUpdate
                 }, (data) => {
                     let updates = data.toJSON()
                     for (let id in updates) {
@@ -61,7 +68,7 @@ angular.module('tinderApp')
                     }
                 });
                 this.sortedKeys = sortMatchKeys(this.matches);
-                lastSuccesfulUpdate = new Date().toISOString();
+                this.lastSuccesfulUpdate = new Date().toISOString();
             };
             $interval(this.getUpdates, 10000); // Periodically get new updates
         }

@@ -1,15 +1,23 @@
-<p>Matches:</p>
+<div ng-show="match.isChatEnabled">
+    <div ng-click="match.returnFromChat()" class="btn-link">Back</div>
+    <div class="container chat-view">
 
-<div class="container chat-view" ng-show="match.isChatEnabled">
-    <div class="row" ng-repeat="message in match.messages">
-        <div class="col-sm-3">{{ message.sender }} </div>
-        <div class="col-sm-9"> {{ message.message }} </div>
+        <div ng-repeat="message in match.messages">
+            <div class="row"><b>{{ message.sender }}</b> {{ message.sent | date:'MM-dd HH:mm:ss'}} </div>
+            <div class="row"> {{ message.message }} </div>
+        </div>
     </div>
-    <input type="text" ng-model="match.chatMessage">
-    <input type="button" ng-click="match.sendMessage()">
+    <div class="row">
+        <div class="col-sm-10">
+            <input type="text" ng-model="match.chatMessage" class="form-control">
+        </div>
+        <div class="col-sm-2">
+            <input type="button" class="btn-primary" ng-click="match.sendMessage()" value="Send">
+        </div>
+    </div>
 </div>
 
-<div class="container">
+<div class="container" ng-show="match.isMatchListEnabled">
     <div ng-repeat="(index, key) in match.sortedKeys" class="row row-bottom-margin">
         <div class="col-sm-1"><a ng-click="match.openChat(key)">{{match.matches[key].name }}</a></div>
         <div class="col-sm-2"><img ng-src="{{match.matches[key].thumbnails[0]}}" ng-click="match.openPhotos(key)"></div>
