@@ -13,8 +13,8 @@ def autolike_users(session):
         if match:
             matches += 1
 
-        print "%s match=%s %d/%d %f" % (user, match, matches, number_of_users, float(matches) / number_of_users)
-        db.save_user(user, match)
+        print "%s match=%s %d/%d %f" % (user, match, matches, number_of_users,  float(matches) / number_of_users)
+        db.save_user(user, match, [])
         # time.sleep(1) Might be needed
     print("Matched with %d/%d users\n" % (matches, number_of_users))
     return json.dumps({"users": number_of_users, "matched":matches})
@@ -26,20 +26,25 @@ def get_conversation(messages):
 
     return sorted(conversation, key=lambda x: x["sent"])
 
-def users(session):
+def get_users():
     ret = {}
     users = list(db.PotentialMatch.select().where(db.PotentialMatch.matched == True).paginate(1, 50))
     for user in users:
-        ret[user.id] = {"name" : user.name, "thumbnails": user.thumbnails, "photos" : user.photos }
+        ret[user.id] = {"name" : user.name, "thumbnails": user.thumbnails, "photos" : user.photos,
+        messages: user.conversation
+        }
         # ret.append(str(user.photos).split(","))
     print ret
     return jsonpickle.dumps(ret)
 
 def get_matches(matches):
+    print(matches)
     ret = {}
     for match in matches:
+        print(match)
         ret[match.id] = {"name": match.user.name, "messages": get_conversation(match.messages),
         "photos" : match.user.photos, "thumbnails" : match.user.thumbnails, "id" : match.id }
+        db.save_user(match.user, True, match.messages)
     return ret
 
 def matches(session):
@@ -60,5 +65,5 @@ def get_updates(session, since):
 def get_statistics(session):
     number_of_users_swiped = db.PotentialMatch.select().count()
     number_of_users_matched = db.PotentialMatch.select().where(db.PotentialMatch.matched == True).count()
-    match_rate = float(number_of_users_matched)/number_of_users_swiped
+    match_rate = 0 if number_of_users_swiped == 0 else float(number_of_users_matched)/number_of_users_swiped
     return jsonpickle.dumps({"swiped" : number_of_users_swiped, "matched": number_of_users_matched, "match_rate" : match_rate})
