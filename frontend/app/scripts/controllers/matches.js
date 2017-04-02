@@ -27,6 +27,18 @@ angular.module('tinderApp')
                 // $("#matchphotos").slick();
             }
 
+            this.sortMessages = (messages) => {
+                return _.sortBy(messages, (message) => {
+                    return Date.parse(message.sent)
+                }).reverse();
+            };
+
+            this.sortMatchKeys = (matches) => {
+                return _.sortBy(matches, (match) => {
+                    return match.messages.length == 0 ? 0 : match.messages[match.messages.length - 1].sent
+                }).reverse().map((element) => {return element.id});
+            };
+
             this.returnFromChat = () => {
               this.isChatEnabled = false;
               this.isMatchListEnabled = true;
@@ -73,15 +85,3 @@ angular.module('tinderApp')
             $interval(this.getUpdates, 10000); // Periodically get new updates
         }
     ]);
-
-function sortMessages(messages) {
-    return _.sortBy(messages, (message) => {
-        return Date.parse(message.sent)
-    }).reverse();
-}
-
-function sortMatchKeys(matches) {
-    return _.sortBy(matches, (match) => {
-        return match.messages.length == 0 ? 0 : match.messages[match.messages.length - 1].sent
-    }).reverse().map((element) => {return element.id});
-}
