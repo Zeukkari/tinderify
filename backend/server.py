@@ -87,6 +87,6 @@ def get_updates():
     since = request.args.get("since")
     return api.get_updates(session, since)
 if __name__ == "__main__":
-    init(True)
+    init(False)
     webbrowser.open("http://localhost:5000")
     app.run(threaded=True)

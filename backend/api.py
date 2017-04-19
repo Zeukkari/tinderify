@@ -41,7 +41,7 @@ def get_matches(matches):
     print(matches)
     ret = {}
     for match in matches:
-        print(match)
+        # print(match)
         ret[match.id] = {"name": match.user.name, "messages": get_conversation(match.messages),
         "photos" : match.user.photos, "thumbnails" : match.user.thumbnails, "id" : match.id }
         db.save_user(match.user, True, match.messages)

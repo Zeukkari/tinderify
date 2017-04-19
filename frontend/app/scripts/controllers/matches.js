@@ -14,7 +14,7 @@ angular.module('tinderApp')
 
             Matches.get((data) => {
                 this.matches = data.toJSON();
-                this.sortedKeys = sortMatchKeys(this.matches);
+                this.sortedKeys = this.sortMatchKeys(this.matches);
             });
 
             // Open chat with the given user
@@ -22,14 +22,14 @@ angular.module('tinderApp')
                 this.isChatEnabled = true;
                 this.isMatchListEnabled = false;
                 this.currentId = id;
-                this.messages = sortMessages(this.matches[id].messages);
+                this.messages = this.sortMessages(this.matches[id].messages);
                 this.currentMatch = this.matches[id];
                 // $("#matchphotos").slick();
             }
 
             this.sortMessages = (messages) => {
                 return _.sortBy(messages, (message) => {
-                    return Date.parse(message.sent)
+                    return message.sent;
                 }).reverse();
             };
 
@@ -76,10 +76,10 @@ angular.module('tinderApp')
                         // Update any new received messages
                         console.log(existingMatch);
                         console.log(updatedMatch);
-                        existingMatch.messages = sortMessages(_.unionBy(existingMatch.messages, updatedMatch.messages, "id"));
+                        existingMatch.messages = this.sortMessages(_.unionBy(existingMatch.messages, updatedMatch.messages, "id"));
                     }
                 });
-                this.sortedKeys = sortMatchKeys(this.matches);
+                this.sortedKeys = this.sortMatchKeys(this.matches);
                 this.lastSuccesfulUpdate = new Date().toISOString();
             };
             $interval(this.getUpdates, 10000); // Periodically get new updates
