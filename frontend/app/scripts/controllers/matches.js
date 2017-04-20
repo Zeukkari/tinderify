@@ -29,7 +29,7 @@ angular.module('tinderApp')
       this.sortMessages = (messages) => {
         return _.sortBy(messages, (message) => {
           return message.sent;
-        }).reverse();
+        });
       };
 
       this.sortMatchKeys = (matches) => {

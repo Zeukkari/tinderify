@@ -31,8 +31,10 @@ def init(isMockingEnabled):
     # print mock_session.x()
     if not isMockingEnabled:
         session = pynder.Session(facebook_token=config.facebook_auth["access_token"], facebook_id=config.facebook_auth["facebook_id"])
+        print session
     else:
         session = mock_session.MockSession()
+        print session
     db.connect()
     # if len(sys.argv) > 1 and sys.argv[1] == "--like":
     #     autolike_users(session)
@@ -87,6 +89,6 @@ def get_updates():
     since = request.args.get("since")
     return api.get_updates(session, since)
 if __name__ == "__main__":
-    init(False)
+    init(config.misc.get("isMockingEnabled", False))
     webbrowser.open("http://localhost:5000")
     app.run(threaded=True)

@@ -31,9 +31,9 @@ describe('Controller: MatchCtrl', function() {
       sent: 103
     }];
     var sorted = MatchCtrl.sortMessages(messages);
-    expect(sorted[0].sent).toBe(103);
+    expect(sorted[0].sent).toBe(55);
     expect(sorted[1].sent).toBe(99);
-    expect(sorted[2].sent).toBe(55);
+    expect(sorted[2].sent).toBe(103);
 
   });
 
