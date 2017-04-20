@@ -6,8 +6,8 @@
  * @description controller for the matches page
  */
 angular.module('tinderApp')
-  .controller('MatchCtrl', ['$scope', 'Matches', 'Users', 'Messages', 'Updates', '$interval', '$timeout', 'ngDialog',
-    function($scope, Matches, Users, Messages, Updates, $interval, $timeout, ngDialog) {
+  .controller('MatchCtrl', ['$scope', 'Matches', 'MatchMessage', '$interval', '$timeout', 'ngDialog',
+    function($scope, Matches, Messages, $interval, $timeout, ngDialog) {
 
       this.init = () => {
         this.lastSuccesfulUpdate = ""; // Contains last succesful made update as an ISO date string
@@ -54,14 +54,14 @@ angular.module('tinderApp')
       }
 
       // Send message to a given user
-      this.sendMessage = () => Messages.save({
+      this.sendMessage = () => MatchMessage.save({
         "id": this.currentId,
         "body": this.chatMessage
       });
 
       // Get updates, like new matches, new messages, removed users, profile changes
       this.getUpdates = () => {
-        Updates.get({
+        Matches.get({
           since: this.lastSuccesfulUpdate
         }, (data) => {
           this.processUpdates(data.toJSON())

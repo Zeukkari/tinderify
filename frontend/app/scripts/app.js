@@ -35,16 +35,12 @@ angular
                 redirectTo: '/'
             });
         //      $locationProvider.hashPrefix('');
-    }).factory("Users", function($resource) {
-        return $resource("http://localhost:5000/api/users")
     }).factory("Matches", function($resource) {
         return $resource("http://localhost:5000/api/matches")
-    }).factory("Messages", function($resource) {
-        return $resource("http://localhost:5000/api/message")
+    }).factory("MatchMessage", function($resource) {
+        return $resource("http://localhost:5000/api/matches/:id/message")
     }).factory("Statistics", function($resource) {
-        return $resource("http://localhost:5000/api/statistics")
-    }).factory("Updates", function($resource) {
-        return $resource("http://localhost:5000/api/updates")
+        return $resource("http://localhost:5000/api/commands/statistics")
     }).factory("Autolike", function($resource) {
-        return $resource("http://localhost:5000/api/autolike")
+        return $resource("http://localhost:5000/api/commands/autolike")
     });

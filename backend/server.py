@@ -36,16 +36,6 @@ def init(isMockingEnabled):
         session = mock_session.MockSession()
         print session
     db.connect()
-    # if len(sys.argv) > 1 and sys.argv[1] == "--like":
-    #     autolike_users(session)
-
-@app.route('/api/autolike')
-def autolike_users():
-    """
-    Swipe right on all users until likes are exhausted
-    :return: Total users and matched users
-    """
-    return api.autolike_users(session)
 
 @app.route("/api/matches")
 def matches():
@@ -55,24 +45,16 @@ def matches():
     """
     return api.matches(session)
 
-@app.route("/api/users")
-def get_users():
-    """
-    Get all new matches
-    :return: new matches
-    """
-    return api.users()
-
-@app.route("/api/message", methods=["POST"])
+@app.route("/api/matches/<user_id>/message", methods=["POST"])
 def send_message():
     """
     Send a message to user
     :return: ok
     """
     data = json.loads(request.data)
-    return api.send_message(session, data["id"], data["body"])
+    return api.send_message(session, user_id, data["body"])
 
-@app.route("/api/statistics")
+@app.route("/api/commands/statistics")
 def statistics():
     """
     Get statistics of tinder usage
@@ -80,14 +62,14 @@ def statistics():
     """
     return api.get_statistics(session)
 
-@app.route("/api/updates", methods=["GET"])
-def get_updates():
+@app.route('/api/commands/autolike')
+def autolike_users():
     """
-    Get updates, new matches, messages etc.
-    :return: updates
+    Swipe right on all users until likes are exhausted
+    :return: Total users and matched users
     """
-    since = request.args.get("since")
-    return api.get_updates(session, since)
+    return api.autolike_users(session)
+
 if __name__ == "__main__":
     init(config.misc.get("isMockingEnabled", False))
     webbrowser.open("http://localhost:5000")
