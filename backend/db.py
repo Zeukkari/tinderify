@@ -29,7 +29,7 @@ def save_user(user, is_matched, messages):
         Thumbnail(url=thumbnail, user=saved_user).save()
 
     for message in messages:
-        Conversation(message=message.body, sent=message.sent, user=saved_user).save()
+        Conversation(body=message.body, sent=message.sent, user=saved_user).save()
 
         # for interest in user.common_interests:
         #     Interest(name=interest, user=saved_user).save()
@@ -70,9 +70,10 @@ class Thumbnail(Model):
         database = db
 
 class Conversation(Model):
-    message = CharField()
+    body = CharField()
     sent = DateTimeField()
     user = ForeignKeyField(PotentialMatch, related_name="conversation")
+    # tinder_message_id = CharField()
 
     class Meta:
         database = db

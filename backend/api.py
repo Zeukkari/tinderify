@@ -26,24 +26,39 @@ def get_conversation(messages):
 
     return sorted(conversation, key=lambda x: x["sent"])
 
-def get_users():
-    ret = {}
-    users = list(db.PotentialMatch.select().where(db.PotentialMatch.matched == True).paginate(1, 50))
-    for user in users:
-        ret[user.id] = {"name" : user.name, "thumbnails": user.thumbnails, "photos" : user.photos,
-        messages: user.conversation
-        }
-        # ret.append(str(user.photos).split(","))
-    print ret
-    return jsonpickle.dumps(ret)
+def get_thumbnails(thumbnails):
+    return [thumbnail.url for thumbnail in thumbnails]
 
-def get_matches(matches):
+def get_photos(photos):
+    return [photo.url for photo in photos]
+
+def get_matches(session):
+    ret = {}
+    print("Querying..")
+    users = list(db.PotentialMatch.select().where(db.PotentialMatch.matched == True).paginate(1, 100))
+    print("Done")
+    for user in users:
+        print(jsonpickle.dumps(get_thumbnails(user.thumbnails)))
+        print(list(user.conversation))
+        # print(get_conversation(list(user.conversation)))
+        ret[user.tinder_id] = {"name" : user.name, "thumbnails": get_thumbnails(user.thumbnails),
+         "photos" : get_photos(user.photos), "messages": get_conversation(list(user.conversation)),
+         "id" : user.tinder_id }
+        # break
+
+    print ret
+    return ret
+
+def update_matches(session):
+    return
+    matches = session.matches()
     print(matches)
     ret = {}
     for match in matches:
         # print(match)
-        ret[match.id] = {"name": match.user.name, "messages": get_conversation(match.messages),
-        "photos" : match.user.photos, "thumbnails" : match.user.thumbnails, "id" : match.id }
+        # ret[match.id] = {"name": match.user.name, "messages": get_conversation(match.messages),
+        # "photos" : match.user.photos, "thumbnails" : match.user.thumbnails, "id" : match.id }
+        # print(get_conversation(match.messages))
         db.save_user(match.user, True, match.messages)
     return ret
 

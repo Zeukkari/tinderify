@@ -36,6 +36,7 @@ def init(isMockingEnabled):
         session = mock_session.MockSession()
         print session
     db.connect()
+    api.update_matches(session)
 
 @app.route("/api/matches")
 def matches():
@@ -72,5 +73,6 @@ def autolike_users():
 
 if __name__ == "__main__":
     init(config.misc.get("isMockingEnabled", False))
-    webbrowser.open("http://localhost:5000")
+    if not app.debug:
+         webbrowser.open("http://localhost:5000")
     app.run(threaded=True)
