@@ -28,7 +28,7 @@ describe('Controller: MatchCtrl', function() {
     }, {
       sent: 55
     }, {
-      sent : 103
+      sent: 103
     }];
     var sorted = MatchCtrl.sortMessages(messages);
     expect(sorted[0].sent).toBe(103);
@@ -73,6 +73,43 @@ describe('Controller: MatchCtrl', function() {
     expect(sorted[3]).toBe("6");
 
 
+  });
+
+  it('Verify matches are updated correctly', function() {
+
+    var matches = {
+      "1": {
+        id: "1",
+        messages: [{
+          sent: 2,
+          id: 1,
+          message: "hi"
+        }]
+      },
+      "2": {
+        id: "2",
+        messages: [{
+          sent: 5,
+          id: 2,
+          message: "hello"
+        }]
+      },
+    };
+
+    MatchCtrl.processUpdates(matches);
+
+    expect(MatchCtrl.matches["1"].id).toBe("1");
+    expect(MatchCtrl.matches["1"].messages.length).toBe(1);
+
+    matches["1"].messages.push({
+      sent: 3,
+      id: 2
+    });
+
+    MatchCtrl.processUpdates(matches);
+
+    expect(MatchCtrl.matches["1"].id).toBe("1");
+    expect(MatchCtrl.matches["1"].messages.length).toBe(2);
   });
 
 });
