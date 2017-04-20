@@ -9,9 +9,9 @@ def connect():
     :return:
     """
     db.connect()
-    db.create_tables([PotentialMatch, Photo, Thumbnail, Interest], safe=True)
+    db.create_tables([PotentialMatch, Photo, Thumbnail, Interest, Conversation], safe=True)
 
-def save_user(user, is_matched):
+def save_user(user, is_matched, messages):
     """
     Save user to database
     :param user: user to save
@@ -27,6 +27,9 @@ def save_user(user, is_matched):
 
     for thumbnail in user.thumbnails:
         Thumbnail(url=thumbnail, user=saved_user).save()
+
+    for message in messages:
+        Conversation(message=message.body, sent=message.sent, user=saved_user).save()
 
         # for interest in user.common_interests:
         #     Interest(name=interest, user=saved_user).save()
@@ -52,7 +55,6 @@ class Photo(Model):
     class Meta:
         database = db
 
-
 class Interest(Model):
     name = CharField()
     user = ForeignKeyField(PotentialMatch, related_name="interests")
@@ -60,10 +62,17 @@ class Interest(Model):
     class Meta:
         database = db
 
-
 class Thumbnail(Model):
     url = CharField()
     user = ForeignKeyField(PotentialMatch, related_name="thumbnails")
+
+    class Meta:
+        database = db
+
+class Conversation(Model):
+    message = CharField()
+    sent = DateTimeField()
+    user = ForeignKeyField(PotentialMatch, related_name="conversation")
 
     class Meta:
         database = db

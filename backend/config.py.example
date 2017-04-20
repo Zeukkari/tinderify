@@ -2,3 +2,7 @@ facebook_auth = dict(
     access_token = '',
     facebook_id = ''
 )
+
+misc = dict(
+  isMockingEnabled = False
+)

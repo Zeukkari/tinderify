@@ -8,8 +8,10 @@ import sys
 import api
 import config
 import webbrowser
-
+import mock_session
+# from mock_session import *
 app = Flask(__name__, static_folder='../frontend/app', static_url_path='/')
+app.debug=True
 session = None
 
 @app.route('/bower_components/<path:filename>')
@@ -24,9 +26,15 @@ def test(filename):
 def root():
     return app.send_static_file('index.html')
 
-def init():
+def init(isMockingEnabled):
     global session
-    session = pynder.Session(facebook_token=config.facebook_auth["access_token"], facebook_id=config.facebook_auth["facebook_id"])
+    # print mock_session.x()
+    if not isMockingEnabled:
+        session = pynder.Session(facebook_token=config.facebook_auth["access_token"], facebook_id=config.facebook_auth["facebook_id"])
+        print session
+    else:
+        session = mock_session.MockSession()
+        print session
     db.connect()
     # if len(sys.argv) > 1 and sys.argv[1] == "--like":
     #     autolike_users(session)
@@ -46,6 +54,14 @@ def matches():
     :return: new matches
     """
     return api.matches(session)
+
+@app.route("/api/users")
+def get_users():
+    """
+    Get all new matches
+    :return: new matches
+    """
+    return api.users()
 
 @app.route("/api/message", methods=["POST"])
 def send_message():
@@ -73,6 +89,6 @@ def get_updates():
     since = request.args.get("since")
     return api.get_updates(session, since)
 if __name__ == "__main__":
-    init()
+    init(config.misc.get("isMockingEnabled", False))
     webbrowser.open("http://localhost:5000")
     app.run(threaded=True)
