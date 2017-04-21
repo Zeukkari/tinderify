@@ -1,5 +1,6 @@
 from peewee import *
 from pprint import pprint
+import time
 
 db = SqliteDatabase('tinder.db')
 
@@ -8,6 +9,7 @@ def connect():
     Connect to database and create tables if they don't exist
     :return:
     """
+    print("connecting")
     db.connect()
     db.create_tables([PotentialMatch, Photo, Thumbnail, Interest, Conversation], safe=True)
 
@@ -29,7 +31,7 @@ def save_user(user, is_matched, messages):
         Thumbnail(url=thumbnail, user=saved_user).save()
 
     for message in messages:
-        Conversation(body=message.body, sent=message.sent, user=saved_user).save()
+        Conversation(body=message.body, sent=time.mktime(message.sent.timetuple()), user=saved_user, sender=message.sender).save()
 
         # for interest in user.common_interests:
         #     Interest(name=interest, user=saved_user).save()
@@ -72,6 +74,7 @@ class Thumbnail(Model):
 class Conversation(Model):
     body = CharField()
     sent = DateTimeField()
+    sender = CharField()
     user = ForeignKeyField(PotentialMatch, related_name="conversation")
     # tinder_message_id = CharField()
 

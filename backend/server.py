@@ -1,18 +1,19 @@
 import json
 import flask
 from flask import Flask
-import pynder
 from flask import request
+from flask import Response
 import db
 import sys
 import api
 import config
 import webbrowser
 import mock_session
+
 # from mock_session import *
 app = Flask(__name__, static_folder='../frontend/app', static_url_path='/')
 app.debug=True
-session = None
+tinder = None
 
 @app.route('/bower_components/<path:filename>')
 def serve_static(filename):
@@ -27,16 +28,15 @@ def root():
     return app.send_static_file('index.html')
 
 def init(isMockingEnabled):
-    global session
-    # print mock_session.x()
+    global tinder
+
     if not isMockingEnabled:
-        session = pynder.Session(facebook_token=config.facebook_auth["access_token"], facebook_id=config.facebook_auth["facebook_id"])
-        print session
+        tinder = api.TinderAPI(config.facebook_auth["access_token"], config.facebook_auth["facebook_id"])
     else:
-        session = mock_session.MockSession()
-        print session
+        tinder = mock_session.MockSession()
+
+    print "here"
     db.connect()
-    api.update_matches(session)
 
 @app.route("/api/matches")
 def matches():
@@ -44,7 +44,7 @@ def matches():
     Get all new matches
     :return: new matches
     """
-    return api.matches(session)
+    return Response(tinder.matches(), "application/json")
 
 @app.route("/api/matches/<user_id>/message", methods=["POST"])
 def send_message():
@@ -53,7 +53,7 @@ def send_message():
     :return: ok
     """
     data = json.loads(request.data)
-    return api.send_message(session, user_id, data["body"])
+    return tinder.send_message(user_id, data["body"])
 
 @app.route("/api/commands/statistics")
 def statistics():
@@ -61,7 +61,7 @@ def statistics():
     Get statistics of tinder usage
     :return: statistics
     """
-    return api.get_statistics(session)
+    return tinder.get_statistics()
 
 @app.route('/api/commands/autolike')
 def autolike_users():
@@ -69,7 +69,7 @@ def autolike_users():
     Swipe right on all users until likes are exhausted
     :return: Total users and matched users
     """
-    return api.autolike_users(session)
+    return tinder.autolike_users()
 
 if __name__ == "__main__":
     init(config.misc.get("isMockingEnabled", False))
