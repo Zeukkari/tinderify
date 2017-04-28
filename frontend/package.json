@@ -40,7 +40,7 @@
     "node": ">=0.10.0"
   },
   "scripts": {
-    "test": "karma start test/karma.conf.js"
+    "test": "./node_modules/.bin/karma start test/karma.conf.js"
   },
   "dependencies": {
     "ng-dialog": "^1.0.1"
