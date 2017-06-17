@@ -24,6 +24,10 @@ angular
                 templateUrl: 'views/matches.html',
                 controller: 'MatchCtrl',
                 controllerAs: 'match'
+            }).when('/swipe', {
+                templateUrl: 'views/swipe.html',
+                controller: 'SwipeCtrl',
+                controllerAs: 'swipe'
             }).when('/commands', {
                 templateUrl: 'views/commands.html',
                 controller: 'CommandsCtrl',
