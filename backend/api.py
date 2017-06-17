@@ -4,17 +4,21 @@ from flask import request
 import db
 import time
 import pynder
+from threading import Thread
 
 
 class TinderAPI:
     session = None
     last_update = None
+    websocket_connection = None
 
-    def __init__(self, access_token, facebook_id):
+    def __init__(self, access_token, facebook_id, websocket_connection):
         self.session = pynder.Session(facebook_token=access_token, facebook_id=facebook_id)
+        self.websocket_connection = websocket_connection
         print access_token, facebook_id
         print(self.session)
-        self.update_matches()
+        Thread(target=self.update_matches).start()
+        # self.update_matches()
 
     def autolike_users(self):
         matches = 0
@@ -58,8 +62,8 @@ class TinderAPI:
             # print(jsonpickle.dumps(get_thumbnails(user.thumbnails)))
             # print(list(user.conversation))
             # print(get_conversation(list(user.conversation)))
-            ret[user.tinder_id] = {"name": user.name, "thumbnails": get_thumbnails(user.thumbnails),
-                                   "photos": get_photos(user.photos), "messages": get_conversation_db(user.conversation),
+            ret[user.tinder_id] = {"name": user.name, "thumbnails": self.get_thumbnails(user.thumbnails),
+                                   "photos": self.get_photos(user.photos), "messages": self.get_conversation_db(user.conversation),
                                    "id": user.tinder_id}
 
         print ret
@@ -75,11 +79,16 @@ class TinderAPI:
             # "photos" : match.user.photos, "thumbnails" : match.user.thumbnails, "id" : match.id }
             # print(get_conversation(match.messages))
             db.save_user(match.user, True, match.messages)
+
+        for n in range(10):
+            self.websocket_connection.emit('updates', ret)
+            time.sleep(1)
+            print("sending")
         return ret
 
     def matches(self):
         # matches = get_matches(session.matches())
-        matches = get_matches(None)
+        matches = self.get_matches()
         # print matches
         return jsonpickle.dumps(matches)
 

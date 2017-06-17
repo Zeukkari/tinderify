@@ -11,7 +11,7 @@
 angular
     .module('tinderApp', [
         'ngResource',
-        'ngRoute', 'ngDialog'
+        'ngRoute', 'ngDialog', 'btford.socket-io'
     ])
     .config(function($routeProvider) {
         $routeProvider
@@ -43,4 +43,6 @@ angular
         return $resource("http://localhost:5000/api/commands/statistics")
     }).factory("Autolike", function($resource) {
         return $resource("http://localhost:5000/api/commands/autolike")
-    });
+    }).factory('mySocket', function (socketFactory) {
+  return socketFactory();
+});

@@ -10,10 +10,14 @@ import config
 import webbrowser
 import mock_session
 
+from flask import Flask, render_template
+from flask_socketio import SocketIO
+
 # from mock_session import *
 app = Flask(__name__, static_folder='../frontend/app', static_url_path='/')
 app.debug=True
 tinder = None
+socketio = SocketIO(app)
 
 @app.route('/bower_components/<path:filename>')
 def serve_static(filename):
@@ -28,15 +32,15 @@ def root():
     return app.send_static_file('index.html')
 
 def init(isMockingEnabled):
-    global tinder
+    db.connect()
 
+    global tinder
     if not isMockingEnabled:
-        tinder = api.TinderAPI(config.facebook_auth["access_token"], config.facebook_auth["facebook_id"])
+        tinder = api.TinderAPI(config.facebook_auth["access_token"], config.facebook_auth["facebook_id"], socketio)
     else:
         tinder = mock_session.MockSession()
 
     print "here"
-    db.connect()
 
 @app.route("/api/matches")
 def matches():
@@ -75,4 +79,5 @@ if __name__ == "__main__":
     init(config.misc.get("isMockingEnabled", False))
     if not app.debug:
          webbrowser.open("http://localhost:5000")
-    app.run(threaded=True)
+    # app.run(threaded=True)
+    socketio.run(app)
