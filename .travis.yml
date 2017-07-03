@@ -7,7 +7,7 @@ before_script:
  - sh -e /etc/init.d/xvfb start
 language: node_js
 addons:
- firefox: "54"
+ firefox: "54.0"
 node_js:
   - "7"
 
