@@ -42,22 +42,30 @@ def init(isMockingEnabled):
 
     print "here"
 
-@app.route("/api/matches")
+@app.route("/api/users/matches")
 def matches():
     """
-    Get all new matches
+    Get existing matches
     :return: new matches
     """
     return Response(tinder.matches(), "application/json")
 
-@app.route("/api/matches/<user_id>/message", methods=["POST"])
+@app.route("/api/users/recommendations")
+def recommendations():
+    """
+    Get a list of recommendations for swiping
+    :return: new matches
+    """
+    return Response(tinder.get_recommendations(), "application/json")
+
+@app.route("/api/users/matches/<user_id>/message", methods=["POST"])
 def send_message():
     """
     Send a message to user
     :return: ok
     """
     data = json.loads(request.data)
-    return tinder.send_message(user_id, data["body"])
+    return Response(tinder.send_message(user_id, data["body"]), "application/json")
 
 @app.route("/api/commands/statistics")
 def statistics():
@@ -65,7 +73,7 @@ def statistics():
     Get statistics of tinder usage
     :return: statistics
     """
-    return tinder.get_statistics()
+    return Response(tinder.get_statistics(), "application/json")
 
 @app.route('/api/commands/autolike')
 def autolike_users():
@@ -73,7 +81,7 @@ def autolike_users():
     Swipe right on all users until likes are exhausted
     :return: Total users and matched users
     """
-    return tinder.autolike_users()
+    return Response(tinder.autolike_users(), "application/json")
 
 if __name__ == "__main__":
     init(config.misc.get("isMockingEnabled", False))

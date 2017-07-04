@@ -88,9 +88,21 @@ class TinderAPI:
 
     def matches(self):
         # matches = get_matches(session.matches())
+
         matches = self.get_matches()
+
         # print matches
-        return jsonpickle.dumps(matches)
+        return jsonpickle.dumps(ret)
+
+    def get_recommendations(self):
+        ret = []
+        recommendations = self.session.nearby_users()
+
+        for recommendation in recommendations:
+            print(recommendation)
+            ret.append({"name" :recommendation.name})
+
+        return jsonpickle.dumps(recommendations)
 
     def send_message(self, id, body):
         ret = self.session._api.message(id, body)

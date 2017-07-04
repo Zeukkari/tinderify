@@ -40,9 +40,11 @@ angular
             });
         //      $locationProvider.hashPrefix('');
     }).factory("Matches", function($resource) {
-        return $resource("http://localhost:5000/api/matches")
+        return $resource("http://localhost:5000/api/users/matches")
     }).factory("MatchMessage", function($resource) {
-        return $resource("http://localhost:5000/api/matches/:id/message")
+        return $resource("http://localhost:5000/api/users/matches/:id/message")
+    }).factory("Recommendations", function($resource) {
+        return $resource("http://localhost:5000/api/users/recommendations")
     }).factory("Statistics", function($resource) {
         return $resource("http://localhost:5000/api/commands/statistics")
     }).factory("Autolike", function($resource) {
