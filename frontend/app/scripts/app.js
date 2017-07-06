@@ -42,9 +42,11 @@ angular
     }).factory("Matches", function($resource) {
         return $resource("http://localhost:5000/api/users/matches")
     }).factory("MatchMessage", function($resource) {
-        return $resource("http://localhost:5000/api/users/matches/:id/message")
+        return $resource("http://localhost:5000/api/users/matches/:id/message", {id: "@id"})
     }).factory("Recommendations", function($resource) {
-        return $resource("http://localhost:5000/api/users/recommendations")
+        return $resource("http://localhost:5000/api/users/recommendations",null, {"get" : {method: 'get', isArray:true}})
+    }).factory("JudgeRecommendation", function($resource) {
+        return $resource("http://localhost:5000/api/users/recommendations/:id/judge", {id : "@id"})
     }).factory("Statistics", function($resource) {
         return $resource("http://localhost:5000/api/commands/statistics")
     }).factory("Autolike", function($resource) {

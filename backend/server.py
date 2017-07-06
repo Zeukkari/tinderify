@@ -58,8 +58,17 @@ def recommendations():
     """
     return Response(tinder.get_recommendations(), "application/json")
 
+@app.route("/api/users/recommendations/<user_id>/judge", methods=["POST"])
+def judge_recommendation(user_id):
+    """
+    Get a list of recommendations for swiping
+    :return: new matches
+    """
+    data = json.loads(request.data)
+    return Response(tinder.judge_recommendations(user_id, data['like']), "application/json")
+
 @app.route("/api/users/matches/<user_id>/message", methods=["POST"])
-def send_message():
+def send_message(user_id):
     """
     Send a message to user
     :return: ok

@@ -69,15 +69,17 @@ class TinderAPI:
         print ret
         return ret
 
+
+    def pynder_user_to_object(self, user):
+        return {"name": user.name, "photos" : list(user.photos), "thumbnails" : list(user.thumbnails), "id" : user.id }
+
     def update_matches(self):
         matches = self.session.matches()
         print(matches)
         ret = {}
         for match in matches:
             # print(match)
-            # ret[match.id] = {"name": match.user.name, "messages": get_conversation(match.messages),
-            # "photos" : match.user.photos, "thumbnails" : match.user.thumbnails, "id" : match.id }
-            # print(get_conversation(match.messages))
+
             db.save_user(match.user, True, match.messages)
 
         for n in range(10):
@@ -94,13 +96,22 @@ class TinderAPI:
         # print matches
         return jsonpickle.dumps(ret)
 
+    def judge_recommendations(self, user_id, like):
+        if like:
+            ret = self.session._api.like(user_id)
+            print(ret)
+            return jsonpickle.dumps(ret)
+        else:
+            print("disliking")
+            return jsonpickle.dumps(self.session._api.dislike(user_id))
+
     def get_recommendations(self):
         ret = []
         recommendations = self.session.nearby_users()
 
         for counter, recommendation in enumerate(recommendations):
             print(recommendation)
-            ret.append({"name" :recommendation.name})
+            ret.append(self.pynder_user_to_object(recommendation))
             if counter == 10:
                 break
 
