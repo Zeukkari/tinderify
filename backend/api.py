@@ -5,7 +5,7 @@ import db
 import time
 import pynder
 from threading import Thread
-
+import datetime
 
 class TinderAPI:
     session = None
@@ -74,21 +74,24 @@ class TinderAPI:
         return {"name": user.name, "photos" : list(user.photos), "thumbnails" : list(user.thumbnails), "id" : user.id }
 
     def update_matches(self):
-        matches = self.session.matches()
-        print(matches)
-        ret = {}
-        for match in matches:
-            # print(match)
-            if db.user_exists(match.user.id):
-                db.mark_user_matched(match.user.id)
-            else:
-                db.save_user(match.user, match.messages, True)
 
-        for n in range(10):
-            self.websocket_connection.emit('updates', ret)
+        while True:
+            matches = list(self.session.matches(self.last_update))
+            self.last_update = datetime.datetime.now().isoformat()
+
+            if len(matches) == 0:
+                time.sleep(1)
+                continue
+
+            for match in matches:
+            # print(match)
+                if db.user_exists(match.user.id):
+                    db.mark_user_matched(match.user.id)
+                else:
+                    db.save_user(match.user, match.messages, True)
+
+            self.websocket_connection.emit('updates', self.get_matches())
             time.sleep(1)
-            print("sending")
-        return ret
 
     def matches(self):
         # matches = get_matches(session.matches())

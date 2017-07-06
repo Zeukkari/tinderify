@@ -9,10 +9,6 @@ angular.module('tinderApp')
     .controller('MatchCtrl', ['$scope', 'Matches', 'MatchMessage', '$interval', '$timeout', 'ngDialog', 'mySocket',
         function($scope, Matches, Messages, $interval, $timeout, ngDialog, mySocket) {
 
-            mySocket.on('updates', function() {
-                console.log("received updates");
-            });
-
             this.init = () => {
                 this.lastSuccesfulUpdate = ""; // Contains last succesful made update as an ISO date string
                 this.isMatchListEnabled = true;
@@ -96,9 +92,15 @@ angular.module('tinderApp')
                 this.sortedKeys = this.sortMatchKeys(this.matches);
                 this.lastSuccesfulUpdate = new Date().toISOString();
 
-                $timeout(this.getUpdates, 10000);
+                // $timeout(this.getUpdates, 10000);
 
             };
+
+            var processUpdates = this.processUpdates;
+            mySocket.on('updates', function(updates) {
+                console.log("received updates");
+                processUpdates(updates);
+            });
 
             this.init();
 
