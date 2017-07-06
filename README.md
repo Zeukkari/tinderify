@@ -1,4 +1,7 @@
 # Tinderify
+
+[![Build Status](https://travis-ci.org/taseppa/tinderify.svg?branch=master)](https://travis-ci.org/taseppa/tinderify)
+
 Tinder tool, supports autoswiping users, chatting and storing statistics.
 
 ## Installation
