@@ -98,11 +98,13 @@ class TinderAPI:
         ret = []
         recommendations = self.session.nearby_users()
 
-        for recommendation in recommendations:
+        for counter, recommendation in enumerate(recommendations):
             print(recommendation)
             ret.append({"name" :recommendation.name})
+            if counter == 10:
+                break
 
-        return jsonpickle.dumps(recommendations)
+        return jsonpickle.dumps(ret)
 
     def send_message(self, id, body):
         ret = self.session._api.message(id, body)
