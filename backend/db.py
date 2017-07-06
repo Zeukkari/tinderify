@@ -1,6 +1,8 @@
 from peewee import *
 from pprint import pprint
 import time
+import datetime
+import jsonpickle
 
 db = SqliteDatabase('tinder.db')
 
@@ -13,7 +15,7 @@ def connect():
     db.connect()
     db.create_tables([PotentialMatch, Photo, Thumbnail, Interest, Conversation], safe=True)
 
-def save_user(user, is_matched, messages):
+def save_user(user, messages, is_matched=False):
     """
     Save user to database
     :param user: user to save
@@ -21,7 +23,8 @@ def save_user(user, is_matched, messages):
     :return:
     """
     saved_user = PotentialMatch(tinder_id=user.id, name=user.name, common_connections=len(user.common_connections),
-                                connection_count=0, age=user.age, distance=user.distance_km, matched=is_matched)
+                                connection_count=0, age=user.age, distance=user.distance_km,
+                                bio=user.bio, first_shown_date=datetime.datetime.now(), matched=is_matched)
     saved_user.save()
 
     for photo in user.photos:
@@ -33,18 +36,28 @@ def save_user(user, is_matched, messages):
     for message in messages:
         Conversation(body=message.body, sent=time.mktime(message.sent.timetuple()), user=saved_user, sender=message.sender).save()
 
-        # for interest in user.common_interests:
-        #     Interest(name=interest, user=saved_user).save()
+    # This is not yet working
+    # for interest in user.common_likes:
+    #     print(jsonpickle.dumps(interest))
+    #     Interest(name=interest, user=saved_user).save()
 
+def user_exists(tinder_id):
+    return PotentialMatch.select().where(PotentialMatch.tinder_id == tinder_id).exists()
+
+def mark_user_matched(tinder_id):
+    PotentialMatch.update(matched=True, match_date=datetime.datetime.now()).where(PotentialMatch.tinder_id==tinder_id).execute()
 
 class PotentialMatch(Model):
     tinder_id = CharField()
     name = CharField()
     common_connections = IntegerField()
     connection_count = IntegerField()
-    matched = BooleanField()
+    matched = BooleanField(default=False)
     age = IntegerField()
     distance = IntegerField()
+    bio = CharField(null=True)
+    first_shown_date = DateTimeField()
+    match_date = DateTimeField(null=True)
 
     class Meta:
         database = db  # This model uses the "people.db" database.
