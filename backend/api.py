@@ -94,7 +94,7 @@ class TinderAPI:
         matches = self.get_matches()
 
         # print matches
-        return jsonpickle.dumps(ret)
+        return jsonpickle.dumps(matches)
 
     def judge_recommendations(self, user_id, like):
         if like:
