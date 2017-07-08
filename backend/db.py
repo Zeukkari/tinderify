@@ -15,38 +15,51 @@ def connect():
     db.connect()
     db.create_tables([PotentialMatch, Photo, Thumbnail, Interest, Conversation], safe=True)
 
-def save_user(user, messages, is_matched=False, force_insert=False):
+def save_user(user, messages, is_matched=False):
     """
     Save user to database
     :param user: user to save
     :param is_matched: was the user, also saved to database
     :return:
     """;
-    saved_user = PotentialMatch(tinder_id=user.id, name=user.name, common_connections=len(user.common_connections),
+
+    database_user = None
+
+    try:
+
+        database_user = PotentialMatch.get(PotentialMatch.tinder_id == user.id)
+        database_user.update( name=user.name, common_connections=len(user.common_connections),
+                                connection_count=0, age=user.age, distance=user.distance_km,
+                                bio=user.bio, matched=is_matched).where(PotentialMatch.tinder_id == user.id).execute()
+        print("Updating existing user")
+        
+    except DoesNotExist:
+        print("Adding new user")
+        print(user.id)
+        database_user = PotentialMatch.create(tinder_id=user.id, name=user.name, common_connections=len(user.common_connections),
                                 connection_count=0, age=user.age, distance=user.distance_km,
                                 bio=user.bio, matched=is_matched)
 
-    saved_user.save(force_insert=force_insert)
+        # TODO: These should be updated for existing user
+        for photo in user.photos:
+            Photo(url=photo, user=database_user).save()
 
-    for photo in user.photos:
-        Photo(url=photo, user=saved_user).save()
+        for thumbnail in user.thumbnails:
+            Thumbnail(url=thumbnail, user=database_user).save()
 
-    for thumbnail in user.thumbnails:
-        Thumbnail(url=thumbnail, user=saved_user).save()
-
-    for message in messages:
-        Conversation(body=message.body, sent=time.mktime(message.sent.timetuple()), user=saved_user, sender=message.sender).save()
+        for message in messages:
+            Conversation(body=message.body, sent=time.mktime(message.sent.timetuple()), user=database_user, sender=message.sender).save()
 
     # This is not yet working
     # for interest in user.common_likes:
     #     print(jsonpickle.dumps(interest))
-    #     Interest(name=interest, user=saved_user).save()
+    #     Interest(name=interest, user=database_user).save()
 
 def update_user_first_shown_date(tinder_id):
     PotentialMatch.update(first_shown_date=datetime.datetime.now()).where(PotentialMatch.tinder_id==tinder_id).execute()
 
-def update_user_swipe_date(tinder_id):
-    PotentialMatch.update(swipe_date=datetime.datetime.now()).where(PotentialMatch.tinder_id==tinder_id).execute()
+def update_user_swipe_date(tinder_id, liked):
+    PotentialMatch.update(swipe_date=datetime.datetime.now(), liked=liked).where(PotentialMatch.tinder_id==tinder_id).execute()
 
 def user_exists(tinder_id):
     return PotentialMatch.select().where(PotentialMatch.tinder_id == tinder_id).exists()
@@ -55,7 +68,7 @@ def mark_user_matched(tinder_id):
     PotentialMatch.update(matched=True, match_date=datetime.datetime.now()).where(PotentialMatch.tinder_id==tinder_id).execute()
 
 class PotentialMatch(Model):
-    tinder_id = CharField(primary_key=True)
+    tinder_id = CharField(unique=True)
     name = CharField()
     common_connections = IntegerField()
     connection_count = IntegerField()

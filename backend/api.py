@@ -24,7 +24,7 @@ class TinderAPI:
         matches = 0
         number_of_users = 0
         for user in session.nearby_users():
-            db.save_user(user, [], force_insert=True)
+            db.save_user(user, [])
             db.update_user_first_shown_date(user.id)
             number_of_users += 1
             match = user.like()
@@ -59,7 +59,7 @@ class TinderAPI:
         ret = {}
         users = list(db.PotentialMatch.select().where(
             db.PotentialMatch.matched == True).paginate(1, 100))
-
+        print ("Getting matches")
         for user in users:
             # print(jsonpickle.dumps(get_thumbnails(user.thumbnails)))
             # print(list(user.conversation))
@@ -79,6 +79,7 @@ class TinderAPI:
 
         while True:
             matches = list(self.session.matches(self.last_update))
+
             self.last_update = datetime.datetime.now().isoformat()
 
             if len(matches) == 0:
@@ -86,7 +87,7 @@ class TinderAPI:
                 continue
 
             for match in matches:
-                db.save_user(match.user, match.messages)
+                db.save_user(match.user, match.messages, True)
 
             self.websocket_connection.emit('updates', self.get_matches())
             time.sleep(1)
@@ -102,6 +103,7 @@ class TinderAPI:
     def judge_recommendations(self, user_id, like):
         if like:
             ret = self.session._api.like(user_id)
+            db.update_user_swipe_date(user_id, like)
             print(ret)
             return jsonpickle.dumps(ret)
         else:
@@ -114,9 +116,10 @@ class TinderAPI:
 
         for counter, recommendation in enumerate(recommendations):
             db.save_user(recommendation, [])
+            db.update_user_first_shown_date(recommendation.id)
             print(recommendation)
             ret.append(self.pynder_user_to_object(recommendation))
-            if counter == 10:
+            if counter == 30:
                 break
 
         return jsonpickle.dumps(ret)
