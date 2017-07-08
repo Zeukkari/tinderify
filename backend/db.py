@@ -15,17 +15,18 @@ def connect():
     db.connect()
     db.create_tables([PotentialMatch, Photo, Thumbnail, Interest, Conversation], safe=True)
 
-def save_user(user, messages, is_matched=False):
+def save_user(user, messages, is_matched=False, force_insert=False):
     """
     Save user to database
     :param user: user to save
     :param is_matched: was the user, also saved to database
     :return:
-    """
+    """;
     saved_user = PotentialMatch(tinder_id=user.id, name=user.name, common_connections=len(user.common_connections),
                                 connection_count=0, age=user.age, distance=user.distance_km,
-                                bio=user.bio, first_shown_date=datetime.datetime.now(), matched=is_matched)
-    saved_user.save()
+                                bio=user.bio, matched=is_matched)
+
+    saved_user.save(force_insert=force_insert)
 
     for photo in user.photos:
         Photo(url=photo, user=saved_user).save()
@@ -41,6 +42,12 @@ def save_user(user, messages, is_matched=False):
     #     print(jsonpickle.dumps(interest))
     #     Interest(name=interest, user=saved_user).save()
 
+def update_user_first_shown_date(tinder_id):
+    PotentialMatch.update(first_shown_date=datetime.datetime.now()).where(PotentialMatch.tinder_id==tinder_id).execute()
+
+def update_user_swipe_date(tinder_id):
+    PotentialMatch.update(swipe_date=datetime.datetime.now()).where(PotentialMatch.tinder_id==tinder_id).execute()
+
 def user_exists(tinder_id):
     return PotentialMatch.select().where(PotentialMatch.tinder_id == tinder_id).exists()
 
@@ -48,7 +55,7 @@ def mark_user_matched(tinder_id):
     PotentialMatch.update(matched=True, match_date=datetime.datetime.now()).where(PotentialMatch.tinder_id==tinder_id).execute()
 
 class PotentialMatch(Model):
-    tinder_id = CharField()
+    tinder_id = CharField(primary_key=True)
     name = CharField()
     common_connections = IntegerField()
     connection_count = IntegerField()
@@ -56,7 +63,9 @@ class PotentialMatch(Model):
     age = IntegerField()
     distance = IntegerField()
     bio = CharField(null=True)
-    first_shown_date = DateTimeField()
+    liked = BooleanField(null=True)
+    first_shown_date = DateTimeField(null=True)
+    swipe_date = DateTimeField(null=True)
     match_date = DateTimeField(null=True)
 
     class Meta:
@@ -64,7 +73,7 @@ class PotentialMatch(Model):
 
 
 class Photo(Model):
-    url = CharField()
+    url = CharField(unique=True)
     user = ForeignKeyField(PotentialMatch, related_name="photos")
 
     class Meta:
@@ -78,7 +87,7 @@ class Interest(Model):
         database = db
 
 class Thumbnail(Model):
-    url = CharField()
+    url = CharField(unique=True)
     user = ForeignKeyField(PotentialMatch, related_name="thumbnails")
 
     class Meta:

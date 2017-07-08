@@ -15,8 +15,8 @@ class TinderAPI:
     def __init__(self, access_token, facebook_id, websocket_connection):
         self.session = pynder.Session(facebook_token=access_token, facebook_id=facebook_id)
         self.websocket_connection = websocket_connection
-        print access_token, facebook_id
-        print(self.session)
+        # print access_token, facebook_id
+        # print(self.session)
         Thread(target=self.update_matches).start()
         # self.update_matches()
 
@@ -24,9 +24,11 @@ class TinderAPI:
         matches = 0
         number_of_users = 0
         for user in session.nearby_users():
-            db.save_user(user, [])
+            db.save_user(user, [], force_insert=True)
+            db.update_user_first_shown_date(user.id)
             number_of_users += 1
             match = user.like()
+            db.update_user_swipe_date(user.id)
             if match:
                 matches += 1
 
@@ -66,7 +68,7 @@ class TinderAPI:
                                    "photos": self.get_photos(user.photos), "messages": self.get_conversation_db(user.conversation),
                                    "id": user.tinder_id}
 
-        print ret
+        # print ret
         return ret
 
 
@@ -84,11 +86,7 @@ class TinderAPI:
                 continue
 
             for match in matches:
-            # print(match)
-                if db.user_exists(match.user.id):
-                    db.mark_user_matched(match.user.id)
-                else:
-                    db.save_user(match.user, match.messages, True)
+                db.save_user(match.user, match.messages)
 
             self.websocket_connection.emit('updates', self.get_matches())
             time.sleep(1)
