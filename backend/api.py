@@ -101,9 +101,9 @@ class TinderAPI:
         return jsonpickle.dumps(matches)
 
     def judge_recommendations(self, user_id, like):
+        db.update_user_swipe_date(user_id, like)
         if like:
             ret = self.session._api.like(user_id)
-            db.update_user_swipe_date(user_id, like)
             print(ret)
             return jsonpickle.dumps(ret)
         else:
@@ -125,6 +125,8 @@ class TinderAPI:
         return jsonpickle.dumps(ret)
 
     def send_message(self, id, body):
+        print "Sending message"
+        print id, body
         ret = self.session._api.message(id, body)
         return "ok"
 

@@ -7,7 +7,7 @@
  */
 angular.module('tinderApp')
     .controller('MatchCtrl', ['$scope', 'Matches', 'MatchMessage', '$interval', '$timeout', 'ngDialog', 'mySocket',
-        function($scope, Matches, Messages, $interval, $timeout, ngDialog, mySocket) {
+        function($scope, Matches, MatchMessage, $interval, $timeout, ngDialog, mySocket) {
 
             this.init = () => {
                 this.lastSuccesfulUpdate = ""; // Contains last succesful made update as an ISO date string
