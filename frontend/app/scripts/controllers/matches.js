@@ -20,7 +20,6 @@ angular.module('tinderApp')
             this.openChat = (id) => {
                 this.isChatEnabled = true;
                 this.isMatchListEnabled = false;
-                this.currentId = id;
                 this.messages = this.sortMessages(this.matches[id].messages);
                 this.currentMatch = this.matches[id];
                 // $("#matchphotos").slick();
@@ -55,7 +54,7 @@ angular.module('tinderApp')
 
             // Send message to a given user
             this.sendMessage = () => MatchMessage.save({
-                "id": this.currentId,
+                "id": this.currentMatch.match_id,
                 "body": this.chatMessage
             });
 

@@ -15,7 +15,7 @@ def connect():
     db.connect()
     db.create_tables([PotentialMatch, Photo, Thumbnail, Interest, Conversation], safe=True)
 
-def save_user(user, messages, is_matched=False):
+def save_user(user, messages, is_matched=False, match_id=None):
     """
     Save user to database
     :param user: user to save
@@ -30,15 +30,15 @@ def save_user(user, messages, is_matched=False):
         database_user = PotentialMatch.get(PotentialMatch.tinder_id == user.id)
         database_user.update( name=user.name, common_connections=len(user.common_connections),
                                 connection_count=0, age=user.age, distance=user.distance_km,
-                                bio=user.bio, matched=is_matched).where(PotentialMatch.tinder_id == user.id).execute()
+                                bio=user.bio, matched=is_matched, match_id=match_id).where(PotentialMatch.tinder_id == user.id).execute()
         print("Updating existing user")
-        
+
     except DoesNotExist:
         print("Adding new user")
         print(user.id)
         database_user = PotentialMatch.create(tinder_id=user.id, name=user.name, common_connections=len(user.common_connections),
                                 connection_count=0, age=user.age, distance=user.distance_km,
-                                bio=user.bio, matched=is_matched)
+                                bio=user.bio, matched=is_matched, match_id=match_id)
 
         # TODO: These should be updated for existing user
         for photo in user.photos:
@@ -47,8 +47,9 @@ def save_user(user, messages, is_matched=False):
         for thumbnail in user.thumbnails:
             Thumbnail(url=thumbnail, user=database_user).save()
 
-        for message in messages:
-            Conversation(body=message.body, sent=time.mktime(message.sent.timetuple()), user=database_user, sender=message.sender).save()
+    for message in messages:
+        if not Conversation.select().where(Conversation.message_id == message.id).exists():
+            Conversation(message_id=message.id, body=message.body, sent=time.mktime(message.sent.timetuple()), user=database_user, sender=message.sender).save()
 
     # This is not yet working
     # for interest in user.common_likes:
@@ -69,6 +70,7 @@ def mark_user_matched(tinder_id):
 
 class PotentialMatch(Model):
     tinder_id = CharField(unique=True)
+    match_id = CharField(unique=True, null=True)
     name = CharField()
     common_connections = IntegerField()
     connection_count = IntegerField()
@@ -107,6 +109,7 @@ class Thumbnail(Model):
         database = db
 
 class Conversation(Model):
+    message_id = CharField(null=True) # Tinder internal message id
     body = CharField()
     sent = DateTimeField()
     sender = CharField()

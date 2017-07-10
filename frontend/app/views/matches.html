@@ -2,7 +2,7 @@
     <div ng-click="match.returnFromChat()" class="btn-link">Back</div>
     <div class="container chat-view">
 
-        <div ng-repeat="message in match.messages">
+        <div ng-repeat="message in match.currentMatch.messages">
             <div class="row"><b>{{ message.sender }}</b> {{ message.sent | date:'MM-dd HH:mm:ss'}} </div>
             <div class="row"> {{ message.message }} </div>
         </div>
