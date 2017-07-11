@@ -25,7 +25,6 @@ module.exports = function(config) {
       'bower_components/bootstrap/dist/js/bootstrap.js',
       'bower_components/angular-resource/angular-resource.js',
       'bower_components/angular-route/angular-route.js',
-      'bower_components/slick-carousel/slick/slick.js',
       'bower_components/lodash/lodash.js',
       'bower_components/ng-dialog/js/ngDialog.js',
       'bower_components/angular-socket-io/socket.js',
