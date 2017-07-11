@@ -112,4 +112,29 @@ describe('Controller: MatchCtrl', function() {
     expect(MatchCtrl.matches["1"].messages.length).toBe(2);
   });
 
+  it('Chat view should be synced during updates', function() {
+
+      var matches = {
+        "1": {
+          id: "1",
+          messages: [{
+            sent: 2,
+            id: 1,
+            message: "hi"
+          }]
+        }
+      };
+
+      MatchCtrl.currentMatch = {
+        id: "1",
+        messages: []
+      };
+
+      expect(MatchCtrl.currentMatch.messages.length).toBe(0);
+      MatchCtrl.processUpdates(matches);
+      MatchCtrl.processUpdates(matches);
+      expect(MatchCtrl.currentMatch.messages.length).toBe(1);
+
+    });
+
 });

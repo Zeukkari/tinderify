@@ -86,6 +86,12 @@ angular.module('tinderApp')
 
                     existingMatch.messages = this.sortMessages(_.unionBy(existingMatch.messages, updatedMatch.messages, "id"));
                     console.info(existingMatch);
+                    console.info("current = " + this.currentMatch);
+
+                    // Also remember to update the current match whose chat is active
+                    if (this.currentMatch !== undefined && this.currentMatch.id === existingMatch.id) {
+                      this.currentMatch = existingMatch;
+                    }
                 }
 
                 this.sortedKeys = this.sortMatchKeys(this.matches);
