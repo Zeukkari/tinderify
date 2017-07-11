@@ -4,6 +4,10 @@
 
 Alternative Tinder client/tool, supports autoswiping users, chatting and storing statistics.
 
+## Prerequisites
+
+You need to login at least once using the official Tinder client, brand new users can't be created.
+
 ## Installation
 1. Install Python dependencies: `pip install flask pynder jsonpickle peewee flask-socketio`
 2. Install frontend dependencies: `cd frontend && bower install`
