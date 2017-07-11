@@ -66,7 +66,7 @@ class TinderAPI:
             # print(get_conversation(list(user.conversation)))
             ret[user.tinder_id] = {"name": user.name, "thumbnails": self.get_thumbnails(user.thumbnails),
                                    "photos": self.get_photos(user.photos), "messages": self.get_conversation_db(user.conversation),
-                                   "id": user.tinder_id, "match_id" : user.match_id}
+                                   "id": user.tinder_id, "match_id" : user.match_id, "bio" : user.bio, "age" : user.age}
 
         # print ret
         return ret
