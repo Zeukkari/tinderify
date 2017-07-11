@@ -1,6 +1,6 @@
 facebook_auth = dict(
-    access_token = '',
-    facebook_id = ''
+    email = '',
+    password = ''
 )
 
 misc = dict(

@@ -9,6 +9,7 @@ import api
 import config
 import webbrowser
 import mock_session
+import access_token
 
 from flask import Flask, render_template
 from flask_socketio import SocketIO
@@ -36,11 +37,10 @@ def init(isMockingEnabled):
 
     global tinder
     if not isMockingEnabled:
-        tinder = api.TinderAPI(config.facebook_auth["access_token"], config.facebook_auth["facebook_id"], socketio)
+        token = access_token.get_access_token(config.facebook_auth["email"], config.facebook_auth["password"])
+        tinder = api.TinderAPI(token, config.facebook_auth["facebook_id"], socketio)
     else:
         tinder = mock_session.MockSession()
-
-    print "here"
 
 @app.route("/api/users/matches")
 def matches():
