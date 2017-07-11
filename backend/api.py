@@ -50,7 +50,7 @@ class TinderAPI:
         return [thumbnail.url for thumbnail in thumbnails]
 
     def get_photos(self, photos):
-        return [photo.url for photo in photos]
+        return [{"url" :photo.url, "id" : photo.id} for photo in photos]
 
     def get_conversation_db(self, conversations):
         return [{"id": message.id, "message": message.body, "sender": message.sender, "sent": message.sent} for message in conversations]

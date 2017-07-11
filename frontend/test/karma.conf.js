@@ -30,6 +30,7 @@ module.exports = function(config) {
       'bower_components/ng-dialog/js/ngDialog.js',
       'bower_components/angular-socket-io/socket.js',
       'bower_components/socket.io-client/dist/socket.io.js',
+      'bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
       'bower_components/angular-mocks/angular-mocks.js',
       // endbower
       'app/scripts/**/*.js',

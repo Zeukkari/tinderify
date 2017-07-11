@@ -1,5 +1,17 @@
-<div>
-  <div class="row" ng-repeat="photo in ngDialogData.photos">
-    <img ng-src="{{photo}}">
+<div uib-carousel>
+  {{active}}
+   <div uib-slide ng-repeat="photo in ngDialogData.photos" index="$index" active="active">
+  <!-- <div uib-slide class="row" ng-repeat="photo in ngDialogData.photos"> -->
+    <img ng-src="{{photo.url}}">
   </div>
 </div>
+
+<!-- <div uib-carousel>
+  <div uib-slide ng-repeat="slide in  match.matches[key].photos track by slide.id" index="$index">
+    <img ng-src="{{slide.url}}" style="margin:auto;">
+    <div class="carousel-caption">
+      <h4>Slide {{slide.id}}</h4>
+      <p>{{slide.text}}</p>
+    </div>
+  </div>
+</div> -->

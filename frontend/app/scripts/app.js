@@ -11,7 +11,7 @@
 angular
     .module('tinderApp', [
         'ngResource',
-        'ngRoute', 'ngDialog', 'btford.socket-io'
+        'ngRoute', 'ngDialog', 'btford.socket-io', 'ui.bootstrap',
     ])
     .config(function($routeProvider) {
         $routeProvider

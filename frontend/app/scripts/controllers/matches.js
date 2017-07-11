@@ -12,6 +12,7 @@ angular.module('tinderApp')
             this.init = () => {
                 this.lastSuccesfulUpdate = ""; // Contains last succesful made update as an ISO date string
                 this.isMatchListEnabled = true;
+                this.activeSlideIndex = 0;
                 this.matches = {};
                 this.getUpdates();
             }
@@ -48,7 +49,11 @@ angular.module('tinderApp')
                 ngDialog.open({
                     template: "views/photos.html",
                     data: this.matches[id],
-                    width: "80%"
+                    width: "80%",
+                    height: 700,
+                    controller: ['$scope', function($scope) {
+                      $scope.active = 0;
+                    }]
                 });
             }
 

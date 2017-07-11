@@ -22,5 +22,6 @@
         <div class="col-sm-1"><a ng-click="match.openChat(key)">{{match.matches[key].name }}</a></div>
         <div class="col-sm-2"><img ng-src="{{match.matches[key].thumbnails[0]}}" ng-click="match.openPhotos(key)"></div>
         <div class="col-sm-9">{{match.matches[key].messages.slice(-1)[0].message}}</div>
+
     </div>
 </div>

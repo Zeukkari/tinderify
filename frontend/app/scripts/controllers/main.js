@@ -8,4 +8,5 @@
 angular.module('tinderApp')
     .controller('MainCtrl', ['$scope', 'Statistics', function($scope, Statistics) {
         this.statistics = Statistics.get();
+
     }]);
