@@ -1,4 +1,6 @@
 <img ng-src="{{swipe.currentRecommendation.photos[0]}}">
 <p>
-<button type="button" class="btn" ng-click="swipe.judge(true)">Like</button>
-<button type="button" class="btn" ng-click="swipe.judge(false)">Pass</button>
+  <div class="btn-group-lg">
+    <button type="button" class="btn" ng-click="swipe.judge(false)">Pass</button>
+    <button type="button" class="btn" ng-click="swipe.judge(true)">Like</button>
+  </div>
