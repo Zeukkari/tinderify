@@ -14,33 +14,29 @@ import access_token
 from flask import Flask, render_template
 from flask_socketio import SocketIO
 
-# from mock_session import *
-app = Flask(__name__, static_folder='../frontend/app', static_url_path='/')
-app.debug=True
+from flask_cors import CORS, cross_origin
+from threading import Thread
+import atexit
+app = Flask(__name__)
+
+CORS(app)
+
 tinder = None
 socketio = SocketIO(app)
 
-@app.route('/bower_components/<path:filename>')
-def serve_static(filename):
-    return flask.send_from_directory('../frontend/bower_components', filename)
-
-@app.route('/<path:filename>')
-def test(filename):
-    return flask.send_from_directory('../frontend/app', filename)
-
-@app.route('/')
-def root():
-    return app.send_static_file('index.html')
-
-def init(isMockingEnabled):
+@app.before_first_request
+def init():
     db.connect()
 
     global tinder
-    if not isMockingEnabled:
+    if not config.misc.get("isMockingEnabled", False):
         token = access_token.get_access_token(config.facebook_auth["email"], config.facebook_auth["password"])
         tinder = api.TinderAPI(token, config.facebook_auth["facebook_id"], socketio)
     else:
         tinder = mock_session.MockSession()
+#
+#     Thread(target=tinder.update_matches).start()
+# #init(config.misc.get("isMockingEnabled", False))
 
 @app.route("/api/users/matches")
 def matches():
@@ -92,9 +88,6 @@ def autolike_users():
     """
     return Response(tinder.autolike_users(), "application/json")
 
-if __name__ == "__main__":
-    init(config.misc.get("isMockingEnabled", False))
-    if not app.debug:
-         webbrowser.open("http://localhost:5000")
-    # app.run(threaded=True)
-    socketio.run(app)
+# if __name__ == "__main__":
+#     # init(config.misc.get("isMockingEnabled", False))
+#     # socketio.run(app)
