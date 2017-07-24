@@ -410,6 +410,11 @@ module.exports = function(grunt) {
                 cwd: '<%= yeoman.app %>/styles',
                 dest: '.tmp/styles/',
                 src: '{,*/}*.css'
+            },
+            deploy: {
+              expand: true,
+              dest: '../backend',
+              src: 'dist/**'
             }
         },
 
