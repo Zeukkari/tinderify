@@ -11,7 +11,7 @@ You need to login at least once using the official Tinder client, brand new user
 ## Installation and running
 1. Install Python dependencies: `pip install flask pynder jsonpickle peewee flask-socketio flask-cors`
 2. Run `cd backend && cp config.py.example config.py` and add your facebook auth info to config.py. 
-3. Start with `python server.py` and open localhost:5000 in web browser.
+3. Start with `FLASK_APP=server.py flask run` and open localhost:5000 in web browser.
 
 ## Development
 
