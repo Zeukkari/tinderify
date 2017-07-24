@@ -17,12 +17,21 @@ from flask_socketio import SocketIO
 from flask_cors import CORS, cross_origin
 from threading import Thread
 import atexit
-app = Flask(__name__)
+app = Flask(__name__, static_folder='./dist', static_url_path='/')
 
 CORS(app)
 
 tinder = None
 socketio = SocketIO(app)
+
+@app.route('/<path:filename>')
+def serve_file(filename):
+    return flask.send_from_directory('./dist', filename)
+
+@app.route('/')
+def root():
+    f = app.send_static_file('index.html')
+    return f
 
 @app.before_first_request
 def init():
@@ -31,12 +40,10 @@ def init():
     global tinder
     if not config.misc.get("isMockingEnabled", False):
         token = access_token.get_access_token(config.facebook_auth["email"], config.facebook_auth["password"])
+        print token
         tinder = api.TinderAPI(token, config.facebook_auth["facebook_id"], socketio)
     else:
         tinder = mock_session.MockSession()
-#
-#     Thread(target=tinder.update_matches).start()
-# #init(config.misc.get("isMockingEnabled", False))
 
 @app.route("/api/users/matches")
 def matches():
