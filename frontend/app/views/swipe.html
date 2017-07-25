@@ -1,17 +1,18 @@
 <div ng-show="swipe.isLoading">
-    <h3 class="text-muted">Loading for new matches...</h3>
-    <img src="images/loading.gif">
+    <h3 class="text-muted">Loading new matches {{swipe.loadingText}}</h3>
+    <!-- <img src="images/loading.gif"> -->
 </div>
 
 <div ng-show="!swipe.isLoading">
     <div id="swipeImageContainer">
-        <img id="swipe-photo" ng-src="{{swipe.currentRecommendation.photos[0]}}">
+        <img id="swipe-photo" ng-src="{{swipe.currentRecommendation.photos[0].url}}">
     </div>
-    <h5>{{swipe.currentRecommendation.name}} {{swipe.currentRecommendation.age}}</h5>
+    <h4>{{swipe.currentRecommendation.name}} {{swipe.currentRecommendation.age}}</h4>
     <h5>{{swipe.currentRecommendation.bio}}</h5>
     <div class="btn-group-lg">
         <button type="button" class="btn btn-danger btn-lg" ng-click="swipe.judge(false)">Pass</button>
         <button type="button" class="btn btn-success  btn-lg" ng-click="swipe.judge(true)">Like</button>
+        <h4 ng-show="swipe.showMatchInfo">Matched!</h4>
     </div>
-    <h4 class="text-muted" style="padding-top: 5px">Either the buttons above or arrow keys left (pass) right (like) can be used.</h4>
+    <h5 class="text-muted" style="padding-top: 5px">Either the buttons above or arrow keys left (pass) right (like) can be used.</h5>
 </div>

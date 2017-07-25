@@ -47,6 +47,8 @@ def save_user(user, messages, is_matched=False, match_id=None):
         for thumbnail in user.thumbnails:
             Thumbnail(url=thumbnail, user=database_user).save()
 
+    return database_user
+
     for message in messages:
         if not Conversation.select().where(Conversation.message_id == message.id).exists():
             Conversation(message_id=message.id, body=message.body, sent=time.mktime(message.sent.timetuple()), user=database_user, sender=message.sender).save()
@@ -55,6 +57,10 @@ def save_user(user, messages, is_matched=False, match_id=None):
     # for interest in user.common_likes:
     #     print(jsonpickle.dumps(interest))
     #     Interest(name=interest, user=database_user).save()
+
+def get_user(tinder_id):
+    user = PotentialMatch.get(PotentialMatch.tinder_id == user.id)
+    return user
 
 def update_user_first_shown_date(tinder_id):
     PotentialMatch.update(first_shown_date=datetime.datetime.now()).where(PotentialMatch.tinder_id==tinder_id).execute()
