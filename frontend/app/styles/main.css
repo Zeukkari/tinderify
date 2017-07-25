@@ -89,3 +89,13 @@ body {
 .chat-view {
   background: #F8F8F8;
 }
+
+#swipeImageContainer {
+  width: 400px;
+  height: 400px;
+}
+
+#swipe-photo {
+  max-width: 100%;
+  max-height: 100%;
+}

@@ -2,15 +2,16 @@
 
 /**
  * @ngdoc function
- * @name tinderApp.controller:MainCtrl
- * @description Controller for the main page
+ * @name tinderApp.controller:SwipeCtrl
+ * @description Controller for the swiping page
  */
 angular.module('tinderApp')
     .controller('SwipeCtrl', ['$scope', 'Recommendations', 'JudgeRecommendation', '$window', function($scope, Recommendations, JudgeRecommendation, $window) {
 
         this.loadNewRecommendations = () => {
-
+            this.isLoading = true;
             Recommendations.get((data) => {
+                this.isLoading = false;
                 this.currentIndex = 0;
                 this.recommendations = data;
                 this.currentRecommendation = this.recommendations[0];
@@ -18,12 +19,11 @@ angular.module('tinderApp')
         };
 
         this.init = () => {
+            this.isLoading = false;
             this.loadNewRecommendations();
         };
 
         this.init();
-
-
 
         this.judge = (like) => {
             JudgeRecommendation.save({
