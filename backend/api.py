@@ -61,19 +61,17 @@ class TinderAPI:
             db.PotentialMatch.matched == True).paginate(1, 100))
         print ("Getting matches")
         for user in users:
-            # print(jsonpickle.dumps(get_thumbnails(user.thumbnails)))
-            # print(list(user.conversation))
-            # print(get_conversation(list(user.conversation)))
-            ret[user.tinder_id] = {"name": user.name, "thumbnails": self.get_thumbnails(user.thumbnails),
+            ret[user.tinder_id] = self.database_user_to_object(user)
+
+        return ret
+
+    def database_user_to_object(self, user):
+         return {"name": user.name, "thumbnails": self.get_thumbnails(user.thumbnails),
                                    "photos": self.get_photos(user.photos), "messages": self.get_conversation_db(user.conversation),
                                    "id": user.tinder_id, "match_id" : user.match_id, "bio" : user.bio, "age" : user.age}
 
-        # print ret
-        return ret
-
-
     def pynder_user_to_object(self, user):
-        return {"name": user.name, "photos" : list(user.photos), "thumbnails" : list(user.thumbnails), "id" : user.id }
+        return {"name": user.name, "photos" : list(user.photos), "thumbnails" : list(user.thumbnails), "id" : user.id, "bio" : user.bio,  }
 
     def update_matches(self):
 
@@ -115,10 +113,10 @@ class TinderAPI:
         recommendations = self.session.nearby_users()
 
         for counter, recommendation in enumerate(recommendations):
-            db.save_user(recommendation, [])
+            user = db.save_user(recommendation, [])
             db.update_user_first_shown_date(recommendation.id)
             print(recommendation)
-            ret.append(self.pynder_user_to_object(recommendation))
+            ret.append(self.database_user_to_object(user))
             if counter == 30:
                 break
 
