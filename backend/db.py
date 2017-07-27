@@ -3,6 +3,7 @@ from pprint import pprint
 import time
 import datetime
 import jsonpickle
+import utils
 
 db = SqliteDatabase('tinder.db')
 
@@ -57,6 +58,17 @@ def save_user(user, messages, is_matched=False, match_id=None):
     # for interest in user.common_likes:
     #     print(jsonpickle.dumps(interest))
     #     Interest(name=interest, user=database_user).save()
+
+def save_matches(matches, is_initial):
+    db.begin()
+
+    if is_initial:
+        PotentialMatch.update(matched=False).execute()
+
+    for match in matches:
+        update_user_last_activity_date(match.user.id, utils.get_unix_time(match.last_activity_date))
+        save_user(match.user, match.messages, True, match.id)
+    db.commit()
 
 def get_user(tinder_id):
     user = PotentialMatch.get(PotentialMatch.tinder_id == user.id)

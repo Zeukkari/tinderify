@@ -79,16 +79,12 @@ class TinderAPI:
         while True:
             matches = list(self.session.matches(self.last_update))
 
-            self.last_update = datetime.datetime.now().isoformat()
-
             if len(matches) == 0:
                 time.sleep(1)
                 continue
 
-            for match in matches:
-                db.update_user_last_activity_date(match.user.id, utils.get_unix_time(match.last_activity_date))
-                db.save_user(match.user, match.messages, True, match.id)
-
+            db.save_matches(matches, self.last_update == None)
+            self.last_update = datetime.datetime.now().isoformat()
             self.websocket_connection.emit('updates', self.get_matches())
             time.sleep(1)
 
