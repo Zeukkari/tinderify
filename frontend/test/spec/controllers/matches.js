@@ -13,7 +13,7 @@ describe('Controller: MatchCtrl', function() {
     scope = $rootScope.$new();
     MatchCtrl = $controller('MatchCtrl', {
       $scope: scope
-      // place here mocked dependencies
+    // place here mocked dependencies
     });
   }));
 
@@ -37,28 +37,32 @@ describe('Controller: MatchCtrl', function() {
 
   });
 
-  it('Match keys should be sorted according to date', function() {
+  it('Match keys should be sorted according to last_activity_date, "highest" date first', function() {
 
     var matches = {
       "1": {
         id: "1",
+        last_activity_date: 43334,
         messages: [{
           sent: 2
         }]
       },
       "5": {
         id: "5",
+        last_activity_date: 5,
         messages: [{
           sent: 9
         }]
       },
       "6": {
         id: "6",
+        last_activity_date: 483334,
         messages: []
       },
 
       "2": {
         id: "2",
+        last_activity_date: 23334,
         messages: [{
           sent: 3
         }]
@@ -67,10 +71,10 @@ describe('Controller: MatchCtrl', function() {
 
     var sorted = MatchCtrl.sortMatchKeys(matches);
 
-    expect(sorted[0]).toBe("5");
-    expect(sorted[1]).toBe("2");
-    expect(sorted[2]).toBe("1");
-    expect(sorted[3]).toBe("6");
+    expect(sorted[0]).toBe("6");
+    expect(sorted[1]).toBe("1");
+    expect(sorted[2]).toBe("2");
+    expect(sorted[3]).toBe("5");
 
 
   });
@@ -114,27 +118,27 @@ describe('Controller: MatchCtrl', function() {
 
   it('Chat view should be synced during updates', function() {
 
-      var matches = {
-        "1": {
-          id: "1",
-          messages: [{
-            sent: 2,
-            id: 1,
-            message: "hi"
-          }]
-        }
-      };
-
-      MatchCtrl.currentMatch = {
+    var matches = {
+      "1": {
         id: "1",
-        messages: []
-      };
+        messages: [{
+          sent: 2,
+          id: 1,
+          message: "hi"
+        }]
+      }
+    };
 
-      expect(MatchCtrl.currentMatch.messages.length).toBe(0);
-      MatchCtrl.processUpdates(matches);
-      MatchCtrl.processUpdates(matches);
-      expect(MatchCtrl.currentMatch.messages.length).toBe(1);
+    MatchCtrl.currentMatch = {
+      id: "1",
+      messages: []
+    };
 
-    });
+    expect(MatchCtrl.currentMatch.messages.length).toBe(0);
+    MatchCtrl.processUpdates(matches);
+    MatchCtrl.processUpdates(matches);
+    expect(MatchCtrl.currentMatch.messages.length).toBe(1);
+
+  });
 
 });

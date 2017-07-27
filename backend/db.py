@@ -68,6 +68,9 @@ def update_user_first_shown_date(tinder_id):
 def update_user_swipe_date(tinder_id, liked):
     PotentialMatch.update(swipe_date=datetime.datetime.now(), liked=liked).where(PotentialMatch.tinder_id==tinder_id).execute()
 
+def update_user_last_activity_date(tinder_id, last_activity_date):
+    PotentialMatch.update(last_activity_date=last_activity_date).where(PotentialMatch.tinder_id==tinder_id).execute()
+
 def user_exists(tinder_id):
     return PotentialMatch.select().where(PotentialMatch.tinder_id == tinder_id).exists()
 
@@ -88,6 +91,7 @@ class PotentialMatch(Model):
     first_shown_date = DateTimeField(null=True)
     swipe_date = DateTimeField(null=True)
     match_date = DateTimeField(null=True)
+    last_activity_date = DateTimeField(null=True)
 
     class Meta:
         database = db  # This model uses the "people.db" database.

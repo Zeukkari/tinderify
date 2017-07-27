@@ -6,6 +6,7 @@ import time
 import pynder
 from threading import Thread
 import datetime
+import utils
 
 class TinderAPI:
     session = None
@@ -42,7 +43,7 @@ class TinderAPI:
         conversation = []
         for message in messages:
             conversation.append({"id": message.id, "message": message.body,
-                                 "sender": message.sender.name, "sent": time.mktime(message.sent.timetuple())});
+                                 "sender": message.sender.name, "sent": utils.get_unix_time(message.sent)});
 
         return sorted(conversation, key=lambda x: x["sent"])
 
@@ -66,9 +67,9 @@ class TinderAPI:
         return ret
 
     def database_user_to_object(self, user):
-         return {"name": user.name, "thumbnails": self.get_thumbnails(user.thumbnails),
+        return {"name": user.name, "thumbnails": self.get_thumbnails(user.thumbnails),
                                    "photos": self.get_photos(user.photos), "messages": self.get_conversation_db(user.conversation),
-                                   "id": user.tinder_id, "match_id" : user.match_id, "bio" : user.bio, "age" : user.age}
+                                   "id": user.tinder_id, "match_id" : user.match_id, "bio" : user.bio, "age" : user.age, "last_activity_date" : user.last_activity_date}
 
     def pynder_user_to_object(self, user):
         return {"name": user.name, "photos" : list(user.photos), "thumbnails" : list(user.thumbnails), "id" : user.id, "bio" : user.bio,  }
@@ -85,17 +86,14 @@ class TinderAPI:
                 continue
 
             for match in matches:
+                db.update_user_last_activity_date(match.user.id, utils.get_unix_time(match.last_activity_date))
                 db.save_user(match.user, match.messages, True, match.id)
 
             self.websocket_connection.emit('updates', self.get_matches())
             time.sleep(1)
 
     def matches(self):
-        # matches = get_matches(session.matches())
-
         matches = self.get_matches()
-
-        # print matches
         return jsonpickle.dumps(matches)
 
     def judge_recommendations(self, user_id, like):
