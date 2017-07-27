@@ -1,3 +1,21 @@
+<h5>Filter</h5>
+
+<div>
+    <form class="form-inline">
+        <div class="form-group">
+            <label for="connections">Common connections</label>
+            <input type="text" class="form-control" id="connections" size="3" ng-model="match.filterCommonConnections" ng-change="match.filter()">
+        </div>
+        <div class="checkbox">
+            <label><input type="checkbox" ng-model="match.filterIsMatched" ng-change="match.filter()">Matched</label>
+        </div>
+        <div class="checkbox">
+            <label><input type="checkbox" ng-model="match.filterHasTexted" ng-change="match.filter()">Texted</label>
+        </div>
+        <!-- <button class="btn btn-default" ng-click="match.filter()">Filter</button> -->
+    </form>
+</div>
+<p></p>
 <div ng-show="match.isChatEnabled">
     <div ng-click="match.returnFromChat()" class="btn-link">Back</div>
     <div class="container chat-view">

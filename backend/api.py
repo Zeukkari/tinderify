@@ -58,8 +58,9 @@ class TinderAPI:
 
     def get_matches(self):
         ret = {}
-        users = list(db.PotentialMatch.select().where(
-            db.PotentialMatch.matched == True).paginate(1, 100))
+        # users = list(db.PotentialMatch.select().where(
+        #     db.PotentialMatch.matched == True).paginate(1, 100))
+        users = list(db.PotentialMatch.select().paginate(1, 1000))
         print ("Getting matches")
         for user in users:
             ret[user.tinder_id] = self.database_user_to_object(user)
@@ -69,7 +70,9 @@ class TinderAPI:
     def database_user_to_object(self, user):
         return {"name": user.name, "thumbnails": self.get_thumbnails(user.thumbnails),
                                    "photos": self.get_photos(user.photos), "messages": self.get_conversation_db(user.conversation),
-                                   "id": user.tinder_id, "match_id" : user.match_id, "bio" : user.bio, "age" : user.age, "last_activity_date" : user.last_activity_date}
+                                   "id": user.tinder_id, "match_id" : user.match_id, "bio" : user.bio, "age" : user.age,
+                                    "last_activity_date" : user.last_activity_date, "common_connections" : user.common_connections,
+                                    "matched" : user.matched}
 
     def pynder_user_to_object(self, user):
         return {"name": user.name, "photos" : list(user.photos), "thumbnails" : list(user.thumbnails), "id" : user.id, "bio" : user.bio,  }

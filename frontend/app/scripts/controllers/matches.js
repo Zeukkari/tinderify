@@ -15,6 +15,8 @@ angular.module('tinderApp')
         this.activeSlideIndex = 0;
         this.matches = {};
         this.getUpdates();
+        this.filterCommonConnections = 0;
+        this.filterIsMatched = true;
       }
 
       // Open chat with the given user
@@ -55,7 +57,19 @@ angular.module('tinderApp')
             $scope.active = 0;
           }]
         });
-      }
+      };
+
+      this.filter = () => {
+        let filterCommonConnections = this.filterCommonConnections;
+        let filterIsMatched = this.filterIsMatched;
+        let filterHasTexted = this.filterHasTexted;
+
+        let sortedMatches = _.filter(this.matches, (match) => {
+          return match.common_connections >= filterCommonConnections && match.matched == filterIsMatched && (!filterHasTexted || (filterHasTexted && match.messages.length > 0));
+        });
+
+        this.sortedKeys = this.sortMatchKeys(sortedMatches);
+      };
 
       // Send message to a given user
       this.sendMessage = () => MatchMessage.save({
@@ -102,7 +116,7 @@ angular.module('tinderApp')
         this.sortedKeys = this.sortMatchKeys(this.matches);
         this.lastSuccesfulUpdate = new Date().toISOString();
 
-        // $timeout(this.getUpdates, 10000);
+        this.filter();
 
       };
 
