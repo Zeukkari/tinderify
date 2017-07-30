@@ -28,6 +28,8 @@ angular.module('tinderApp')
       this.isLoading = false;
       this.loadNewRecommendations();
       this.showMatchInfo = false;
+      this.swipeCount = 0;
+      this.matchCount = 0;
     };
 
     this.init();
@@ -44,8 +46,10 @@ angular.module('tinderApp')
         "id": this.currentRecommendation.id,
         "like": like
       }, (data) => {
+        this.swipeCount++;
         if (data.matched) {
           this.showMatchedNotification();
+          this.matchCount = 0;
         }
       });
       if (this.currentIndex + 1 == this.recommendations.length) {

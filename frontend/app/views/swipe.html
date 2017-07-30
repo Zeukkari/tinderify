@@ -7,12 +7,18 @@
     <div id="swipeImageContainer">
         <img id="swipe-photo" ng-src="{{swipe.currentRecommendation.photos[0].url}}">
     </div>
-    <h4>{{swipe.currentRecommendation.name}} {{swipe.currentRecommendation.age}}</h4>
-    <h5>{{swipe.currentRecommendation.bio}}</h5>
-    <div class="btn-group-lg">
-        <button type="button" class="btn btn-danger btn-lg" ng-click="swipe.judge(false)">Pass</button>
-        <button type="button" class="btn btn-success  btn-lg" ng-click="swipe.judge(true)">Like</button>
-        <h4 ng-show="swipe.showMatchInfo">Matched!</h4>
+    <div class="swipeInfoBox">
+        <p>Swiped {{swipe.swipeCount}}</p>
+        <p>Matched: {{swipe.matchCount}}</p>
     </div>
-    <h5 class="text-muted" style="padding-top: 5px">Either the buttons above or arrow keys left (pass) right (like) can be used.</h5>
+    <div class="swipeBottomContainer">
+        <h4>{{swipe.currentRecommendation.name}} {{swipe.currentRecommendation.age}}</h4>
+        <h5>{{swipe.currentRecommendation.bio}}</h5>
+        <div class="btn-group-lg">
+            <button type="button" class="btn btn-danger btn-lg" ng-click="swipe.judge(false)">Pass</button>
+            <button type="button" class="btn btn-success  btn-lg" ng-click="swipe.judge(true)">Like</button>
+            <h4 ng-show="swipe.showMatchInfo">Matched!</h4>
+        </div>
+        <h5 class="text-muted" style="padding-top: 5px">Either the buttons above or arrow keys left (pass) right (like) can be used.</h5>
+    </div>
 </div>

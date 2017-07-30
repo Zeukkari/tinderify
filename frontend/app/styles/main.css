@@ -1,3 +1,5 @@
+/* Todo unify class naming */
+
 .browsehappy {
   margin: 0.2em 0;
   background: #ccc;
@@ -93,9 +95,18 @@ body {
 #swipeImageContainer {
   width: 400px;
   height: 400px;
+  float: left;
 }
 
 #swipe-photo {
   max-width: 100%;
   max-height: 100%;
+}
+
+.swipeInfoBox {
+  float:right;
+}
+
+.swipeBottomContainer {
+  clear: both;
 }
