@@ -48,11 +48,11 @@ def save_user(user, messages, is_matched=False, match_id=None):
         for thumbnail in user.thumbnails:
             Thumbnail(url=thumbnail, user=database_user).save()
 
-    return database_user
-
     for message in messages:
         if not Conversation.select().where(Conversation.message_id == message.id).exists():
             Conversation(message_id=message.id, body=message.body, sent=time.mktime(message.sent.timetuple()), user=database_user, sender=message.sender).save()
+
+    return database_user
 
     # This is not yet working
     # for interest in user.common_likes:
