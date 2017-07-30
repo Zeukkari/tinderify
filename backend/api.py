@@ -60,7 +60,7 @@ class TinderAPI:
         ret = {}
         # users = list(db.PotentialMatch.select().where(
         #     db.PotentialMatch.matched == True).paginate(1, 100))
-        users = list(db.PotentialMatch.select().paginate(1, 1000))
+        users = list(db.PotentialMatch.select().paginate(1, 10000))
         print ("Getting matches")
         for user in users:
             ret[user.tinder_id] = self.database_user_to_object(user)
