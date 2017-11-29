@@ -22,21 +22,20 @@ class TinderAPI:
         Thread(target=self.update_matches).start()
         # self.update_matches()
 
-    def autolike_users(self):
+    def autolike_users(self, max_count):
         matches = 0
         number_of_users = 0
-        for user in session.nearby_users():
+        for user in self.session.nearby_users(max_count):
             db.save_user(user, [])
             db.update_user_first_shown_date(user.id)
             number_of_users += 1
             match = user.like()
-            db.update_user_swipe_date(user.id)
+            db.update_user_swipe_date(user.id, True)
             if match:
                 matches += 1
 
             print "%s match=%s %d/%d %f" % (user, match, matches, number_of_users,  float(matches) / number_of_users)
-            db.mark_as_matched(user, match, [])
-            # time.sleep(1) Might be needed
+            time.sleep(0.2) # To prevent spamming the server with too many requests
         print("Matched with %d/%d users\n" % (matches, number_of_users))
         return json.dumps({"users": number_of_users, "matched": matches})
 

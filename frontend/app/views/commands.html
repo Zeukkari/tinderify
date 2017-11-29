@@ -1,1 +1,8 @@
-<div ng-click="commands.autolike()" class="btn-link">Autolike</div>
+<h4>Autolike</h4>
+<form class="form-inline">
+    <div class="form-group">
+        <label for="maxCount">Max count</label>
+        <input type="text" class="form-control" id="maxCount" size="3" ng-model="commands.maxAutolikeCount">
+    </div>
+    <button class="btn btn-default" ng-click="commands.autolike()">Autolike</button>
+</form>

@@ -87,13 +87,14 @@ def statistics():
     """
     return Response(tinder.get_statistics(), "application/json")
 
-@app.route('/api/commands/autolike')
+@app.route('/api/commands/autolike', methods=["POST"])
 def autolike_users():
     """
     Swipe right on all users until likes are exhausted
     :return: Total users and matched users
     """
-    return Response(tinder.autolike_users(), "application/json")
+    max_count = request.args.get('maxCount')
+    return Response(tinder.autolike_users(max_count), "application/json")
 
 # if __name__ == "__main__":
 #     # init(config.misc.get("isMockingEnabled", False))
