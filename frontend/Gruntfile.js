@@ -16,7 +16,8 @@ module.exports = function(grunt) {
     require('jit-grunt')(grunt, {
         useminPrepare: 'grunt-usemin',
         ngtemplates: 'grunt-angular-templates',
-        cdnify: 'grunt-google-cdn'
+        cdnify: 'grunt-google-cdn',
+	uglify: "grunt-contrib-uglify-es"
     });
 
     // Configurable paths for the application
@@ -294,18 +295,18 @@ module.exports = function(grunt) {
         //     }
         //   }
         // },
-        // uglify: {
-        //   dist: {
-        //     files: {
-        //       '<%= yeoman.dist %>/scripts/scripts.js': [
-        //         '<%= yeoman.dist %>/scripts/scripts.js'
-        //       ]
-        //     }
-        //   }
-        // },
-        // concat: {
-        //   dist: {}
-        // },
+         uglify: {
+           dist: {
+             files: {
+               '<%= yeoman.dist %>/scripts/scripts.js': [
+                 '<%= yeoman.dist %>/scripts/scripts.js'
+               ]
+             }
+           }
+         },
+         concat: {
+           dist: {}
+         },
 
         imagemin: {
             dist: {

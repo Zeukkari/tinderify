@@ -14,7 +14,7 @@
     "grunt-contrib-htmlmin": "^0.4.0",
     "grunt-contrib-imagemin": "^1.0.0",
     "grunt-contrib-jshint": "^1.1.0",
-    "grunt-contrib-uglify": "git://github.com/gruntjs/grunt-contrib-uglify.git#harmony",
+    "grunt-contrib-uglify-es": "^3.3.0",
     "grunt-contrib-watch": "^0.6.1",
     "grunt-filerev": "^2.1.2",
     "grunt-google-cdn": "^0.4.3",
