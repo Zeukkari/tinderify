@@ -1,13 +1,14 @@
-import json
-import jsonpickle
-from flask import request
-import db
-import time
-import pynder
-from threading import Thread
 import datetime
-import utils
+import json
+import time
+from threading import Thread
+
 import dateutil.tz
+import jsonpickle
+import pynder
+
+import db
+
 
 class TinderAPI:
     session = None
@@ -15,14 +16,40 @@ class TinderAPI:
     websocket_connection = None
 
     def __init__(self, access_token, facebook_id, websocket_connection):
+        """
+        Init function, this starts a new thread which periodically checks for new matches
+        :param access_token: Tinder access token
+        :param facebook_id: Facebook id
+        :param websocket_connection: Websocket connection
+        """
         self.session = pynder.Session(facebook_token=access_token, facebook_id=facebook_id)
         self.websocket_connection = websocket_connection
-        # print access_token, facebook_id
-        # print(self.session)
         Thread(target=self.update_matches).start()
-        # self.update_matches()
+
+    def update_matches(self):
+        """
+        Check periodically for new matches. Any new matches are communicated to the browser using websocket
+        :return:
+        """
+
+        while True:
+            matches = list(self.session.matches(self.last_update))
+
+            if len(matches) == 0:
+                time.sleep(1)  # Check periodically once per second
+                continue
+
+            db.save_matches(matches, self.last_update == None)
+            self.last_update = datetime.datetime.now(dateutil.tz.tzlocal()).isoformat()
+            self.websocket_connection.emit('updates', self.get_matches())
+            time.sleep(1)
 
     def autolike_users(self, max_count):
+        """
+        Start autoliking tinder users
+        :param max_count: maximum number of users to like
+        :return: summary of how many users were liked and matched in json
+        """
         matches = 0
         number_of_users = 0
         for user in self.session.nearby_users(max_count):
@@ -39,63 +66,34 @@ class TinderAPI:
         print("Matched with %d/%d users\n" % (matches, number_of_users))
         return json.dumps({"users": number_of_users, "matched": matches})
 
-    def get_conversation(self, messages):
-        conversation = []
-        for message in messages:
-            conversation.append({"id": message.id, "message": message.body,
-                                 "sender": message.sender.name, "sent": utils.get_unix_time(message.sent)});
-
-        return sorted(conversation, key=lambda x: x["sent"])
-
-    def get_thumbnails(self, thumbnails):
-        return [thumbnail.url for thumbnail in thumbnails]
-
-    def get_photos(self, photos):
-        return [{"url" :photo.url, "id" : photo.id} for photo in photos]
-
-    def get_conversation_db(self, conversations):
-        return [{"id": message.id, "message": message.body, "sender": message.sender, "sent": message.sent} for message in conversations]
-
-    def get_matches(self):
+    def get_matches_from_db(self):
+        """
+        Get matches in the database
+        :return: Matches in the database as a dictionary
+        """
         ret = {}
-        # users = list(db.PotentialMatch.select().where(
-        #     db.PotentialMatch.matched == True).paginate(1, 100))
-        users = list(db.PotentialMatch.select().paginate(1, 10000))
+        users = list(db.PotentialMatch.select().paginate(1, 10000)) # todo remove hardcoded pagination
         print ("Getting matches")
         for user in users:
             ret[user.tinder_id] = self.database_user_to_object(user)
 
         return ret
 
-    def database_user_to_object(self, user):
-        return {"name": user.name, "thumbnails": self.get_thumbnails(user.thumbnails),
-                                   "photos": self.get_photos(user.photos), "messages": self.get_conversation_db(user.conversation),
-                                   "id": user.tinder_id, "match_id" : user.match_id, "bio" : user.bio, "age" : user.age,
-                                    "last_activity_date" : user.last_activity_date, "common_connections" : user.common_connections,
-                                    "matched" : user.matched}
-
-    def pynder_user_to_object(self, user):
-        return {"name": user.name, "photos" : list(user.photos), "thumbnails" : list(user.thumbnails), "id" : user.id, "bio" : user.bio,  }
-
-    def update_matches(self):
-        while True:
-            # print "getting updates " + self.last_update if self.last_update != None else ""
-            matches = list(self.session.matches(self.last_update))
-
-            if len(matches) == 0:
-                time.sleep(1)
-                continue
-
-            db.save_matches(matches, self.last_update == None)
-            self.last_update = datetime.datetime.now(dateutil.tz.tzlocal()).isoformat()
-            self.websocket_connection.emit('updates', self.get_matches())
-            time.sleep(1)
-
     def matches(self):
-        matches = self.get_matches()
+        """
+        Get matches from DB as a JSON
+        :return: matches from DB as a JSON
+        """
+        matches = self.get_matches_from_db()
         return jsonpickle.dumps(matches)
 
     def judge_recommendations(self, user_id, like):
+        """
+        Like or dislike an user
+        :param user_id: User to like/dislike
+        :param like: To like or not to like
+        :return: Result of match as json
+        """
         db.update_user_swipe_date(user_id, like)
         if like:
             ret = self.session._api.like(user_id)
@@ -106,6 +104,10 @@ class TinderAPI:
             return jsonpickle.dumps(self.session._api.dislike(user_id))
 
     def get_recommendations(self):
+        """
+        Get new recommendations from tinder
+        :return: Recommendations as JSON
+        """
         ret = []
         recommendations = self.session.nearby_users()
 
@@ -120,18 +122,22 @@ class TinderAPI:
         return jsonpickle.dumps(ret)
 
     def send_message(self, id, body):
+        """
+        Send a message to a tinder user
+        :param id: user id
+        :param body: message content
+        :return: "ok"
+        """
         print "Sending message"
         print id, body
         ret = self.session._api.message(id, body)
-        return "ok"
-
-    def get_updates(self, since):
-        ret = self.session.updates(since)
-        print ret
-        updates = get_matches(ret)
-        return jsonpickle.dumps(updates)
+        return "ok"  # todo
 
     def get_statistics(self):
+        """
+        Get swiping statistics from database
+        :return: swiping statistics as JSON
+        """
         number_of_users_swiped = db.PotentialMatch.select().count()
         number_of_users_matched = db.PotentialMatch.select().where(
             db.PotentialMatch.matched == True).count()
