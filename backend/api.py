@@ -9,12 +9,13 @@ import pynder
 
 import db
 import db_utils
-
+import pdb
 
 class TinderAPI:
     session = None
     last_update = None
     websocket_connection = None
+    update_check_interval=30
 
     def __init__(self, access_token, facebook_id, websocket_connection):
         """
@@ -34,16 +35,19 @@ class TinderAPI:
         """
 
         while True:
-            matches = list(self.session.matches(self.last_update))
+            print self.last_update
+            # pdb.set_trace()
+            # matches = list(self.session.matches(self.last_update)) # TODO:last update date not working
+            matches = list(self.session.matches(None))
 
             if len(matches) == 0:
-                time.sleep(1)  # Check periodically once per second
+                time.sleep(self.update_check_interval)  # Check periodically once per second
                 continue
 
             db.save_matches(matches, self.last_update == None)
             self.last_update = datetime.datetime.now(dateutil.tz.tzlocal()).isoformat()
-            self.websocket_connection.emit('updates', self.get_matches())
-            time.sleep(1)
+            self.websocket_connection.emit('updates', self.get_matches_from_db())
+            time.sleep(self.update_check_interval)
 
     def autolike_users(self, max_count):
         """
