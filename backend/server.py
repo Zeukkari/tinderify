@@ -96,6 +96,7 @@ def autolike_users():
     max_count = request.args.get('maxCount')
     return Response(tinder.autolike_users(max_count), "application/json")
 
-# if __name__ == "__main__":
-#     # init(config.misc.get("isMockingEnabled", False))
-#     # socketio.run(app)
+if __name__ == "__main__":
+    # init(config.misc.get("isMockingEnabled", False))
+    init()
+    socketio.run(app)
