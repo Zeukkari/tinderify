@@ -14,9 +14,9 @@ def get_conversation(conversations):
             conversations]
 
 
-def database_user_to_object(self, user):
-    return {"name": user.name, "thumbnails": self.get_thumbnails(user.thumbnails),
-            "photos": self.get_photos(user.photos), "messages": self.get_conversation_db(user.conversation),
+def database_user_to_object(user):
+    return {"name": user.name, "thumbnails": get_thumbnails(user.thumbnails),
+            "photos": get_photos(user.photos), "messages": get_conversation(user.conversation),
             "id": user.tinder_id, "match_id": user.match_id, "bio": user.bio, "age": user.age,
             "last_activity_date": user.last_activity_date, "common_connections": user.common_connections,
             "matched": user.matched}

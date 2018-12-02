@@ -8,6 +8,7 @@ import jsonpickle
 import pynder
 
 import db
+import db_utils
 
 
 class TinderAPI:
@@ -75,7 +76,7 @@ class TinderAPI:
         users = list(db.PotentialMatch.select().paginate(1, 10000)) # todo remove hardcoded pagination
         print ("Getting matches")
         for user in users:
-            ret[user.tinder_id] = self.database_user_to_object(user)
+            ret[user.tinder_id] = db_utils.database_user_to_object(user)
 
         return ret
 
@@ -115,7 +116,7 @@ class TinderAPI:
             user = db.save_user(recommendation, [])
             db.update_user_first_shown_date(recommendation.id)
             print(recommendation)
-            ret.append(self.database_user_to_object(user))
+            ret.append(db_utils.database_user_to_object(user))
             if counter == 30:
                 break
 
