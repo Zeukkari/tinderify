@@ -10,7 +10,7 @@ You need to login at least once using the official Tinder client, brand new user
 
 ## Installation and running
 1. Install lxml: `sudo apt-get install python-lxml` (or what is appropriate for your OS)
-2. Install Python dependencies: `pip install flask pynder jsonpickle peewee flask-socketio flask-cors robobrowser`
+2. Install Python dependencies: `pip install flask jsonpickle peewee flask-socketio flask-cors robobrowser`
 3. Run `cd backend && cp config.py.example config.py` and add your facebook auth info to config.py. 
 4. Start with `./run.sh` and open localhost:5000 in web browser.
 
@@ -23,4 +23,7 @@ For development setup both frontend and backend support auto-reloading on file c
 3. Install frontend dependencies `npm install && bower install`
 4. Start serving frontend `grunt serve`
 
-
+## Todo
+* Safer handling of facebook credentials
+* Prettier UI
+* More statistics
